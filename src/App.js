@@ -2,14 +2,9 @@ import React from "react";
 import { HashRouter, Switch, Redirect, Route } from "react-router-dom";
 
 import HomePage from "./components/HomePage/HomePage"
+import IncludePage from "./components/IncludePage/IncludePage"
 import RegisterPage from "./components/RegisterPage/RegisterPage"
 import LoginPage from "./components/LoginPage/LoginPage"
-import UpdatePage from "./components/UpdatePage/UpdatePage"
-import IncludePage from "./components/IncludePage/IncludePage"
-import HistoryPage from "./components/HistoryPage/HistoryPage"
-import QRCodePage from "./components/QRCodePage/QRCodePage"
-import ScannerPage from "./components/ScannerPage/ScannerPage"
-import AccessControlPage from "./components/AccessControlPage/AccessControlPage"
 import Auth from "./stores/auth";
 
 function PrivateRoute({ component: Component, ...rest }) {
@@ -64,12 +59,7 @@ export default class App extends React.Component {
           <Route exact path="/register" component={RegisterPage} />
           <LogoutRoute exact path="/logout" />
           <PrivateRoute exact path="/" component={HomePage} />
-          <PrivateRoute exact path="/orders/include" component={IncludePage} />
-          <PrivateRoute exact path="/orders/scan" component={ScannerPage} />
-          <PrivateRoute exact path="/orders/:id/update" component={UpdatePage} />
-          <PrivateRoute exact path="/orders/:id/history" component={HistoryPage} />
-          <PrivateRoute exact path="/orders/:id/access" component={AccessControlPage} />
-          <PrivateRoute exact path="/orders/:id/qr" component={QRCodePage} />
+          <PrivateRoute exact path="/assignments/include" component={IncludePage} />
         </Switch>
       </HashRouter>
     );

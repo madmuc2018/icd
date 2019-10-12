@@ -15,9 +15,9 @@ class RegisterPage extends React.Component {
     }
 
     this.state = {
-      email: "test1@test.com",
-      password: "123",
-      role: ""
+      email: "",
+      password: "",
+      role: "student"
     };
 
     this.handleChange = event => {
@@ -31,7 +31,8 @@ class RegisterPage extends React.Component {
       try {
         this.setState({loading: 'Registering'});
         await api.register(this.state.email, this.state.password, this.state.role);
-        this.props.history.push("/login");
+        Auth.setToken(await api.login(this.state.email, this.state.password));
+        this.props.history.replace("/");
       } catch (error) {
         alert(error);
       } finally {
@@ -54,7 +55,6 @@ class RegisterPage extends React.Component {
           <AsyncAwareContainer loading={this.state.loading}>
             <FormRow name="email" onChange={this.handleChange} />
             <FormRow name="password" type="password" onChange={this.handleChange} />
-            <FormRow name="role" onChange={this.handleChange} />
             <Button onClick={this.handleRegister}>Register</Button>
           </AsyncAwareContainer>
         </Container>

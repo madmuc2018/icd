@@ -7,7 +7,7 @@ class FormRow extends Component {
     return (
       <div>
         <Row>
-          <Col xs="3">{utils.propercase(this.props.name)}</Col>
+          <Col xs="2">{utils.propercase(this.props.name)}</Col>
           <Col>
             <FormControl
               placeholder={this.props.placeholder ? this.props.placeholder : ""}

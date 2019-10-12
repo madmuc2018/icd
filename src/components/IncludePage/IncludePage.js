@@ -3,22 +3,13 @@ import api from "../../Data/api";
 import FormRow from '../FormRow';
 import MyNavBar from '../MyNavBar';
 import AsyncAwareContainer from '../AsyncAwareContainer';
-import { Container, Button} from 'react-bootstrap';
+import { Container, Button, Modal} from 'react-bootstrap';
 
 class IncludePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: "",
-      producer: "",
-      farm: "",
-      elevation: "",
-      variety: "",
-      process: "",
-      quantity: "",
-      qc: "",
-      tastingNotes: "",
-      price:""
+      name: ""
     };
 
     this.handleChange = event => {
@@ -28,10 +19,12 @@ class IncludePage extends Component {
       });
     }
 
-    this.handleIncludeOrder = async event => {
+    this.validInput = () => this.state.name.trim().length > 0;
+
+    this.submit = async event => {
       try {
-        this.setState({loading: 'Including order'});
-        await api.addOrder(this.state);
+        this.setState({loading: 'Including assignment'});
+        await api.includeAssignment(this.state);
         this.props.history.push("/");
       } catch (error) {
         alert(error);
@@ -51,26 +44,43 @@ class IncludePage extends Component {
       <div>
         <MyNavBar/>
         <Container>
-          <h1 className="text-center">Include Coffee</h1>
+          <h1 className="text-center">Include assignment</h1>
           <AsyncAwareContainer loading={this.state.loading}>
-            <FormRow name="id" onChange={this.handleChange} />
-            <FormRow name="producer" onChange={this.handleChange} />
-            <FormRow name="farm" onChange={this.handleChange} />
-            <FormRow name="elevation" onChange={this.handleChange} />
-            <FormRow name="variety" onChange={this.handleChange} />
-            <FormRow name="process" onChange={this.handleChange} />
-            <FormRow name="quantity" onChange={this.handleChange} />
-            <FormRow name="qc" onChange={this.handleChange} />
-            <FormRow name="tastingNotes" onChange={this.handleChange} />
-            <FormRow name="price" onChange={this.handleChange} />
+            <FormRow name="name" onChange={this.handleChange} />
             <div className="text-center">
-              <Button onClick={this.handleIncludeOrder}>Include</Button>
+              {
+                this.validInput() ? <Button onClick={this.submit}> Include </Button> : <Guard/>
+              }
             </div>
           </AsyncAwareContainer>
         </Container>
       </div>
     );
   }
+}
+
+function Guard() {
+  const [show, setShow] = React.useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  return (
+    <div>
+      <Button variant="primary" onClick={handleShow}>
+        Include
+      </Button>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Body> Do not leave name empty </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
 }
 
 export default IncludePage;

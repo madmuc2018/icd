@@ -32,7 +32,7 @@ class LoginPage extends React.Component {
         Auth.setToken(await api.login(this.state.email, this.state.password));
         this.props.history.replace("/");
       } catch (error) {
-        alert(error);
+        alert("Invalid email or password");
       } finally {
         if (!this.componentUnmounted)
           this.setState({loading: undefined});

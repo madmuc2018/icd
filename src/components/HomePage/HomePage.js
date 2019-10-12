@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import api from "../../Data/api";
-import { Container, Card, ListGroup, InputGroup, FormControl } from 'react-bootstrap';
+import { Container, Card, ListGroup, Button} from 'react-bootstrap';
 import MyNavBar from '../MyNavBar';
-import CoffeeItemNav from '../CoffeeItemNav';
 import AsyncAwareContainer from '../AsyncAwareContainer';
+import moment from 'moment';
+import { IoMdCheckmark, IoMdDoneAll, IoMdStopwatch } from 'react-icons/io';
 
 
 class HomePage extends Component {
@@ -11,24 +12,65 @@ class HomePage extends Component {
     super();
 
     this.state = {
-      orders: [],
-      filterer: ""
+      assignments: []
     };
 
-    this.handleFilter = event => {
-      const { value } = event.target;
-      this.setState({
-        filterer: value.trim().toLowerCase()
-      });
+    this.changeAssignment = async (guid, operation) => {
+      try {
+        this.setState({loading: 'Updating ...'});
+
+        const filtered = this.state.assignments.filter(a => a.guid === guid);
+        if (filtered.length !== 1)
+          return console.warn(`Error updating ${guid}`);
+        const assignment = filtered[0].data;
+
+        switch(operation) {
+          case "START": 
+            if (assignment.startTime)
+              return console.warn("Already started")
+            assignment.startTime = moment().format('MMMM Do YYYY, h:mm:ss a');
+            break;
+          case "END": 
+            if (assignment.endTime)
+              return console.warn("Already end");
+            assignment.endTime = moment().format('MMMM Do YYYY, h:mm:ss a');
+            break;
+          default:
+            return console.warn(`No ${operation}`);
+        }
+
+        await api.updateAssignment(guid, assignment);
+        const assignments = await api.getAssignments();
+        this.setState({
+          assignments
+        });
+        this.props.history.push("/");
+      } catch (error) {
+        alert(error);
+      } finally {
+        if (!this.componentUnmounted)
+          this.setState({loading: undefined});
+      }
+    }
+
+    this.cardStatus = a => {
+      if (!a.startTime)
+        return "danger"
+      if (a.startTime && !a.endTime)
+        return "warning"
+      if (a.startTime && a.endTime)
+        return "success"
+      return "dark"
     }
   }
 
   async componentDidMount() {
     try {
       this.setState({loading: true});
-      const orders = await api.getOrders();
+      const assignments = await api.getAssignments();
+      // console.log(assignments);
       this.setState({
-        orders
+        assignments
       });
     } catch (error) {
       alert(error);
@@ -47,34 +89,34 @@ class HomePage extends Component {
       <div>
         <MyNavBar/>
         <Container>
-          <h1 className="text-center">Inventory</h1>
           <AsyncAwareContainer loading={this.state.loading}>
-            <InputGroup>
-              <FormControl
-                placeholder="Search by ID"
-                name="filterer"
-                onChange={this.handleFilter}/>
-            </InputGroup>
-            <br/>
-            {this.state.orders
-              .filter(o => {
-                const keyword = this.state.filterer;
-                return keyword.length === 0 ? true : o.data.id.trim().toLowerCase().includes(keyword);
-              })
-              .map(o =>
-                <Card key={o.guid}>
-                  <Card.Header className="text-center">
-                    <CoffeeItemNav coffeeGuid={o.guid} coffeeId={o.data.id}></CoffeeItemNav>
-                  </Card.Header>
-                  <Card.Body>
-                    <ListGroup variant="flush">
-                      <ListGroup.Item> Producer: {o.data.producer} </ListGroup.Item>
-                      <ListGroup.Item> Variety: {o.data.variety} </ListGroup.Item>
-                      <ListGroup.Item> Quantity: {o.data.quantity} </ListGroup.Item>
-                      <ListGroup.Item> Status: {o.data.status} </ListGroup.Item>
-                    </ListGroup>
-                  </Card.Body>
-                </Card>
+            <h1 className="text-center">{ this.state.assignments && this.state.assignments.length > 0 ? "Assignments" : "Please include assignments" } <IoMdStopwatch /></h1>
+            {this.state.assignments
+              .map(i =>
+                <div key={i.guid}>
+                  <Card bg={this.cardStatus(i.data)}>
+                    <Card.Header as="h5" className="text-center">{i.data.name}</Card.Header>
+                    <Card.Body>
+                      <ListGroup>
+                        <ListGroup.Item variant="secondary"> <IoMdCheckmark /> Start time: {i.data.startTime} </ListGroup.Item>
+                        <ListGroup.Item variant="secondary"> <IoMdDoneAll /> End time: {i.data.endTime} </ListGroup.Item>
+                        { !i.data.startTime ?
+                            <ListGroup.Item className="text-center" variant="secondary">
+                              <Button variant="info" onClick={() => this.changeAssignment(i.guid, "START")}>Start</Button>
+                            </ListGroup.Item>
+                          : <div/>
+                        }
+                        { !i.data.endTime && i.data.startTime ?
+                            <ListGroup.Item className="text-center" variant="secondary">
+                              <Button variant="info" onClick={() => this.changeAssignment(i.guid, "END")}>End</Button>
+                            </ListGroup.Item>
+                          : <div/>
+                        }
+                      </ListGroup>
+                    </Card.Body>
+                  </Card>
+                  <br/><br/>
+                </div>
             )}
           </AsyncAwareContainer>
         </Container>
