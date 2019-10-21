@@ -9,7 +9,7 @@ export default () => (
         <LinkContainer to="/">
           <Button variant="link">Home</Button>
         </LinkContainer>
-        <LinkContainer to="/assignments/include">
+        <LinkContainer to="/tasks/include">
           <Button variant="link">Include</Button>
         </LinkContainer>
         <LinkContainer to="/logout">

@@ -1,10 +1,13 @@
 import React from "react";
 import Auth from "../../stores/auth";
+import Consent from "../../stores/consent";
 import api from "../../Data/api";
+import logo from "../logo.png";
 import FormRow from '../FormRow';
 import MyAuthNavBar from '../MyAuthNavBar';
-import { Button, Container } from "react-bootstrap";
+import { Button, Container, Image } from "react-bootstrap";
 import AsyncAwareContainer from '../AsyncAwareContainer';
+import { LinkContainer } from 'react-router-bootstrap';
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -48,13 +51,25 @@ class LoginPage extends React.Component {
     return (
       <div>
         <MyAuthNavBar/>
-        <Container>
-          <h1>Login</h1>
-          <AsyncAwareContainer loading={this.state.loading}>
-            <FormRow name="email" onChange={this.handleChange} />
-            <FormRow name="password" type="password" onChange={this.handleChange} />
-            <Button onClick={this.handleLogin}>Log in</Button>
-          </AsyncAwareContainer>
+        <Container className="text-center">
+          <Image src={logo} fluid />
+          {
+            Consent.isConsented() ?
+              <AsyncAwareContainer loading={this.state.loading}>
+                <FormRow name="email" placeholder="email"  onChange={this.handleChange} />
+                <FormRow name="password" placeholder="password"  type="password" onChange={this.handleChange} />
+                <Button onClick={this.handleLogin}>Log in</Button>
+              </AsyncAwareContainer>
+            :
+              <div>
+                <p style={{color: 'blue'}}> To start using this app, you must first give your consent to participate in the study: Impact of curriculum overload on students' mental health using the Curriculum Densitometer </p>
+                <LinkContainer to={`/consent`} replace>
+                  <Button variant="primary">
+                    Give consent
+                  </Button>
+                </LinkContainer>
+              </div>
+          }
         </Container>
       </div>
     );

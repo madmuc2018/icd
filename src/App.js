@@ -3,8 +3,10 @@ import { HashRouter, Switch, Redirect, Route } from "react-router-dom";
 
 import HomePage from "./components/HomePage/HomePage"
 import IncludePage from "./components/IncludePage/IncludePage"
+import DetailsPage from "./components/DetailsPage/DetailsPage"
 import RegisterPage from "./components/RegisterPage/RegisterPage"
 import LoginPage from "./components/LoginPage/LoginPage"
+import ConsentPage from "./components/ConsentPage/ConsentPage"
 import Auth from "./stores/auth";
 
 function PrivateRoute({ component: Component, ...rest }) {
@@ -57,9 +59,11 @@ export default class App extends React.Component {
         <Switch>
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/register" component={RegisterPage} />
+          <Route exact path="/consent" component={ConsentPage} />
           <LogoutRoute exact path="/logout" />
           <PrivateRoute exact path="/" component={HomePage} />
-          <PrivateRoute exact path="/assignments/include" component={IncludePage} />
+          <PrivateRoute exact path="/tasks/include" component={IncludePage} />
+          <PrivateRoute exact path="/tasks/:id/details" component={DetailsPage} />
         </Switch>
       </HashRouter>
     );

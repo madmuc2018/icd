@@ -23,8 +23,8 @@ class IncludePage extends Component {
 
     this.submit = async event => {
       try {
-        this.setState({loading: 'Including assignment'});
-        await api.includeAssignment(this.state);
+        this.setState({loading: 'Including task'});
+        await api.includeTask(this.state);
         this.props.history.push("/");
       } catch (error) {
         alert(error);
@@ -44,7 +44,7 @@ class IncludePage extends Component {
       <div>
         <MyNavBar/>
         <Container>
-          <h1 className="text-center">Include assignment</h1>
+          <h1 className="text-center">Include task</h1>
           <AsyncAwareContainer loading={this.state.loading}>
             <FormRow name="name" onChange={this.handleChange} />
             <div className="text-center">
