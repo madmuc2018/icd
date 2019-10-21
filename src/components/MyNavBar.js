@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -17,6 +17,6 @@ export default () => (
         </LinkContainer>
       </Nav>
     </Navbar>
-    <br/>
+    <br />
   </div>
 );

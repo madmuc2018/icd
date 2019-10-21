@@ -3,9 +3,7 @@
     "browser": true,
     "es6": true
   },
-  "extends": [
-    "airbnb"
-  ],
+  "extends": [],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
@@ -65,12 +63,6 @@
     "curly": [
       "error",
       "all"
-    ],
-    "no-unused-vars": [
-      "error",
-      {
-        "argsIgnorePattern": "next"
-      }
     ],
     "no-const-assign": "error",
     "no-use-before-define": [
