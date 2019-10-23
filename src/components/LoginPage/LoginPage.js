@@ -52,7 +52,7 @@ class LoginPage extends React.Component {
       <div>
         <MyAuthNavBar/>
         <Container className="text-center">
-          <Image src={logo} fluid />
+          <Image src={logo} style={{margin: '5rem', width: '15rem'}} fluid />
           {
             Consent.isConsented() ?
               <AsyncAwareContainer loading={this.state.loading}>
