@@ -2,7 +2,7 @@ import axios from 'axios';
 import Auth from '../stores/auth';
 
 // const API = "https://fsbccoffee.ngrok.io/v1";
-const API = 'https://ad0fed8b.ngrok.io/v1';
+const API = 'https://cd-app-usask.herokuapp.com/v1';
 
 function authHeader() {
   return { headers: { Authorization: `Bearer ${Auth.getToken()}` } };
