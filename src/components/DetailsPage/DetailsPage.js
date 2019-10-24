@@ -8,6 +8,7 @@ import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
 
 const timeFormat = 'MMMM Do YYYY, h:mm:ss a';
+const [START, END, PAUSE, CONTINUE] = ["START", "END", "PAUSE", "CONTINUE"];
 
 class DetailsPage extends Component {
   constructor() {
@@ -24,17 +25,49 @@ class DetailsPage extends Component {
       try {
         this.setState({loading: 'Updating ...'});
         const task = this.state.task;
+        const timeNow = (new Date()).getTime();
 
         switch(operation) {
-          case "START": 
+          case START:
             if (task.startTime)
               return console.warn("Already started")
-            task.startTime = moment().format(timeFormat);
+            task.startTime = timeNow;
             break;
-          case "END": 
+          case END:
             if (task.endTime)
               return console.warn("Already end");
-            task.endTime = moment().format(timeFormat);
+            task.endTime = timeNow;
+            if (!task.duration) {
+              const diff = timeNow - task.startTime;
+              task.duration = diff;
+            }
+            else {
+              if (!task.paused) {
+                const diff = timeNow - task.pauseTime;
+                task.duration += diff;
+              }
+            }
+            break;
+          case PAUSE:
+            if (task.paused)
+              return console.warn("Already paused");
+            task.paused = true;
+            if (!task.duration) {
+              const diff = timeNow - task.startTime;
+              task.duration = diff;
+            }
+            else {
+              const diff = timeNow - task.pauseTime;
+              task.duration += diff;
+            }
+            task.pauseTime = timeNow;
+            break;
+          case CONTINUE:
+            if (!task.startTime)
+              return console.warn("Has not started");
+            if (!task.paused)
+              return console.warn("Already continued");
+            task.paused = false;
             break;
           default:
             return console.warn(`No ${operation}`);
@@ -68,8 +101,10 @@ class DetailsPage extends Component {
     }
 
     this.taskDuration = () => {
-			const duration = moment.duration(moment(this.state.task.endTime, timeFormat).diff(moment(this.state.task.startTime, timeFormat)));
-			return Math.round(duration.asMinutes() * 100) / 100;
+      const toSeconds = this.state.task.duration / 1000;
+      const toMinutes = toSeconds / 60;
+      const rounded = Math.round(toMinutes * 100) / 100;
+			return `${rounded} minutes`;
     }
 
     this.handleSubmitStress = async stress => {
@@ -133,7 +168,7 @@ class DetailsPage extends Component {
 									  <h2>Task {this.state.task.name} completed</h2>
 									  <br/><br/>
 									  <h5>Time spent</h5>
-									  <h6>{this.taskDuration()} minutes</h6>
+									  <h6>{this.taskDuration()}</h6>
 								  </Card.Body>
 								</Card>
 							  <br/><br/>
@@ -151,12 +186,12 @@ class DetailsPage extends Component {
 	          	(<div>
 	          		<Card style={{'backgroundColor': '#2799F9', 'color': 'white'}}>
 	          			<Card.Body>
-									  <h2>{this.state.task.name} aaa</h2>
+									  <h2>{this.state.task.name}</h2>
 									  <br/><br/>
 									  <h6>{this.taskStatus()}</h6>
 									  <br/><br/><br/>
 									  <h5>Task Details</h5>
-									  <h6>Start Date: {this.state.task.startTime} | End Date: {this.state.task.endTime}</h6>
+									  <h6>Start Date: {this.state.task.startTime ? moment(this.state.task.startTime).format(timeFormat) : ''} | End Date: {this.state.task.endTime ? moment(this.state.task.endTime).format(timeFormat) : ''}</h6>
 								  </Card.Body>
 								</Card>
 
@@ -169,7 +204,7 @@ class DetailsPage extends Component {
 									    }
 
 									    .btn-xxl {
-									      margin: 5rem 1rem;
+									      margin: 1rem 1rem;
 									      font-size: 3rem;
 									      height: 20rem;
 									      width: 20rem;
@@ -180,11 +215,19 @@ class DetailsPage extends Component {
 
 
 								  { !this.state.task.startTime ?
-			            		<Button variant="flat" size="xxl" onClick={() => this.changeTask("START")}>Start</Button>
+			            		<Button variant="flat" size="xxl" onClick={() => this.changeTask(START)}>Start</Button>
 			              : <div/>
 			            }
+                  { this.state.task.startTime && !this.state.task.endTime && !this.state.task.paused ?
+                      <Button variant="flat" size="xxl" onClick={() => this.changeTask(PAUSE)}>Pause</Button>
+                    : <div/>
+                  }
+                  { this.state.task.startTime && !this.state.task.endTime && this.state.task.paused ?
+                      <Button variant="flat" size="xxl" onClick={() => this.changeTask(CONTINUE)}>Continue</Button>
+                    : <div/>
+                  }
 			            { !this.state.task.endTime && this.state.task.startTime ?
-			                <Button variant="flat" size="xxl" onClick={() => this.changeTask("END")}>Stop</Button>
+			                <Button variant="flat" size="xxl" onClick={() => this.changeTask(END)}>Stop</Button>
 			              : <div/>
 			            }
 								</div>
