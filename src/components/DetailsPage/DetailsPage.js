@@ -86,7 +86,7 @@ class DetailsPage extends Component {
 	      	task: updatedTask.data
 	      });
 
-        this.props.history.replace(`/tasks/${newGuid}/details`);
+        this.props.history.replace(`/`);
       } catch (error) {
         alert(error);
       } finally {
