@@ -9,7 +9,8 @@
     "test": "react-scripts test",
     "build-deploy": "rm -rf build && ./node_modules/.bin/pug -O '{\"PUG_FOR_INSTRUCTOR\": false}' public/index.pug && npm run build && gh-pages -d build",
     "deploy": "gh-pages -d build",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "eslint": "eslint --fix src/**/*.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -23,6 +24,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
+    "mgr-pdf-viewer-react": "^1.0.3",
     "moment": "^2.24.0",
     "nouislider-react": "^3.3.5",
     "qrcode.react": "^0.9.3",
