@@ -73,15 +73,10 @@ class DetailsPage extends Component {
             return console.warn(`No ${operation}`);
         }
 
-        const newGuid = await api.updateTask(this.state.guid, task);
-	      const updatedTask = (await api.getTasks()).filter(o => o.guid === newGuid)[0];
-
-	      this.setState({
-	      	guid: updatedTask.guid,
-	      	task: updatedTask.data
-	      });
-
-        this.props.history.replace(`/tasks/${newGuid}/details`);
+        const nGuid = await api.updateTask(this.state.guid, task);
+        this.props.history.replace(`/tasks/${nGuid}/details`);
+        // Not sure why but history replace does not update guid
+        this.setState({guid: nGuid});
       } catch (error) {
         alert(error);
       } finally {
@@ -113,14 +108,7 @@ class DetailsPage extends Component {
         const task = this.state.task;
         task.stress = stress;
 
-        const newGuid = await api.updateTask(this.state.guid, task);
-	      const updatedTask = (await api.getTasks()).filter(o => o.guid === newGuid)[0];
-
-	      this.setState({
-	      	guid: updatedTask.guid,
-	      	task: updatedTask.data
-	      });
-
+        await api.updateTask(this.state.guid, task);
         this.props.history.replace(`/`);
       } catch (error) {
         alert(error);
@@ -134,12 +122,14 @@ class DetailsPage extends Component {
   async componentDidMount() {
     try {
       this.setState({loading: true});
-      const tasks = await api.getTasks();
-      const i = tasks.filter(o => o.guid === this.props.match.params.id)[0];
+      const task = await api.getTaskLatest(this.props.match.params.id); 
+      if (task.guid !== this.props.match.params.id) {
+        this.props.history.replace(`/tasks/${task.guid}/details`);
+      }
 
       this.setState({
-      	guid: i.guid,
-      	task: i.data
+      	guid: task.guid,
+      	task: task.data
       });
     } catch (error) {
       alert(error);

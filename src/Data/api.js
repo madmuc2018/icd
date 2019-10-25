@@ -19,6 +19,10 @@ export default {
     }
     return token;
   },
+  getTaskLatest: async guid => {
+    const result = await axios.get(`${API}/fs/${guid}/latest`, authHeader());
+    return result.data;
+  },
   getTasks: async() => (await axios.get(`${API}/fs`, authHeader())).data,
   updateTask: async(guid, nTask) => {
     const result = await axios.put(`${API}/fs/${guid}`, nTask, authHeader());
@@ -26,5 +30,5 @@ export default {
   },
   includeTask: async nTask => {
     await axios.post(`${API}/fs`, nTask, authHeader());
-  },
+  }
 };
