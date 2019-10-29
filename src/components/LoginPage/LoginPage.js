@@ -5,9 +5,10 @@ import api from "../../Data/api";
 import logo from "../logo.png";
 import FormRow from '../FormRow';
 import MyAuthNavBar from '../MyAuthNavBar';
-import { Button, Container, Image } from "react-bootstrap";
+import { Button, Container, Image, Row, Col } from "react-bootstrap";
 import AsyncAwareContainer from '../AsyncAwareContainer';
 import { LinkContainer } from 'react-router-bootstrap';
+import { IoMdArrowRoundForward } from 'react-icons/io';
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -48,6 +49,52 @@ class LoginPage extends React.Component {
   }
 
   render() {
+    if (window.FOR_INSTRUCTOR) {
+      return (
+        <div>
+          <Container style={{margin: '1rem'}}>
+            <Row style={{height: '48rem'}}>
+                <Col style={{
+                  'backgroundColor': '#2699fb',
+                  'display': 'flex',
+                  'alignItems': 'center',
+                  'justifyContent': 'center',
+                  'color': 'white'
+                }}>
+                  <div style={{width: '20rem'}}>
+                    <h5>Welcome to CD</h5>
+                    <hr style={{'borderTop': 'solid'}}/>
+                    <h6 style={{'fontWeight': 'lighter'}}>
+                      Welcome to the CD app for instructors. Login and to access
+                    </h6>
+                    <br/>
+                    <Button style={{
+                      'borderColor': 'white',
+                      'fontWeight': 'bold',
+                      'color': 'white'
+                    }} variant="outline-dark">Learn more</Button>
+                  </div>
+                </Col>
+                <Col style={{
+                  'margin': '20% 0 20% 0',
+                  'color': '#2699FB'
+                }}>
+                  <Image src={logo} style={{width: '10rem'}} fluid />
+                  <AsyncAwareContainer loading={this.state.loading}>
+                    <div className="text-center">
+                      <h4>Sign in</h4>
+                      <br/>
+                      <FormRow name="email" placeholder="User ID"  onChange={this.handleChange} />
+                      <FormRow name="password" placeholder="Password"  type="password" onChange={this.handleChange} />
+                      <Button size='sm' onClick={this.handleLogin} block><IoMdArrowRoundForward/></Button>
+                    </div>
+                  </AsyncAwareContainer>
+                </Col>
+            </Row>
+          </Container>
+        </div>
+      )
+    }
     return (
       <div>
         <MyAuthNavBar/>
