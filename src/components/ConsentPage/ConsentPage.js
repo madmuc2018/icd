@@ -20,7 +20,6 @@ class ConsentPage extends React.Component {
   render() {
     return (
       <div>
-        <MyAuthNavBar/>
         <style type="text/css">
           {`
             .customViewer {

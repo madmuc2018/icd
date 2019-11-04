@@ -52,8 +52,11 @@ class LoginPage extends React.Component {
     if (window.FOR_INSTRUCTOR) {
       return (
         <div>
-          <Container style={{margin: '1rem'}}>
-            <Row style={{height: '48rem'}}>
+          <Container style={{'margin': '1rem'}}>
+            <Row style={{
+              'minHeight': '100vh',
+              'minWidth': '98vw'
+            }}>
                 <Col style={{
                   'backgroundColor': '#2699fb',
                   'display': 'flex',
@@ -80,15 +83,27 @@ class LoginPage extends React.Component {
                   'color': '#2699FB'
                 }}>
                   <Image src={logo} style={{width: '10rem'}} fluid />
-                  <AsyncAwareContainer loading={this.state.loading}>
-                    <div className="text-center">
-                      <h4>Sign in</h4>
-                      <br/>
-                      <FormRow name="email" placeholder="User ID"  onChange={this.handleChange} />
-                      <FormRow name="password" placeholder="Password"  type="password" onChange={this.handleChange} />
-                      <Button size='sm' onClick={this.handleLogin} block><IoMdArrowRoundForward/></Button>
+                  {
+                  Consent.isConsented() ?
+                    <AsyncAwareContainer loading={this.state.loading}>
+                      <div className="text-center">
+                        <h4>Sign in</h4>
+                        <br/>
+                        <FormRow name="email" placeholder="User ID"  onChange={this.handleChange} />
+                        <FormRow name="password" placeholder="Password"  type="password" onChange={this.handleChange} />
+                        <Button size='sm' onClick={this.handleLogin} block><IoMdArrowRoundForward/></Button>
+                      </div>
+                    </AsyncAwareContainer>
+                  :
+                    <div>
+                      <p style={{color: '#2699FB'}}> To start using this app, you must first give your consent to participate in the study: Impact of curriculum overload on students' mental health using the Curriculum Densitometer </p>
+                      <LinkContainer to={`/consent`} replace>
+                        <Button variant="primary">
+                          Give consent
+                        </Button>
+                      </LinkContainer>
                     </div>
-                  </AsyncAwareContainer>
+                  }
                 </Col>
             </Row>
           </Container>
