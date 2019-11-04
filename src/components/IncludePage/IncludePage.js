@@ -29,7 +29,10 @@ class IncludePage extends Component {
       });
     }
 
-    this.validInput = () => this.state.name.trim().length > 0;
+    this.validInput = () => this.state.name.trim().length > 0 
+      && this.state.estimatedHours.trim().length > 0
+      && this.state.regulatedStartDate
+      && this.state.regulatedEndDate;
 
     this.submit = async event => {
       try {
@@ -167,7 +170,7 @@ function Guard() {
       </Button>
 
       <Modal show={show} onHide={handleClose}>
-        <Modal.Body> Do not leave name empty </Modal.Body>
+        <Modal.Body> Do not leave name, Estimated Hours, and dates empty </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
