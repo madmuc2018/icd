@@ -27,3 +27,4 @@ yarn-error.log*
 package-lock.json.fine
 ngrok
 ubuntu-xenial-16.04-cloudimg-console.log
+public/index.html
