@@ -69,7 +69,10 @@ class HomePage extends Component {
       this.setState({loading: true});
       const tasks = await api.getTasks();
       // console.log(tasks);
-      const chartData = tasks.map(t => ({name: t.data.name, Minutes: this.taskDuration(t.data), Stress: t.data.stress}));
+      const chartData = tasks.map(t => ({
+        name: t.data.name, Stress: t.data.stress,
+        Minutes: typeof t.data.duration === 'number' ? this.taskDuration(t.data) : ""
+      }));
       this.setState({
         tasks,
         chartData
@@ -90,12 +93,16 @@ class HomePage extends Component {
     if (window.FOR_INSTRUCTOR) {
       const BlueBreakline = () => (<hr style={{'borderTop': 'solid', 'borderColor': '#2699fb'}}/>);
 
+      // https://css-tricks.com/snippets/css/a-guide-to-flexbox
+    
       const LeftSide = () => (
         <div style={{
           'flex': '1 0 0',
           'order': '1'
         }}>
-          <Button style={{'color': '#2699FB', 'width': '100%'}} size='lg' variant="outline-dark">Add Tasks <IoIosAddCircle/></Button>
+          <LinkContainer to="/tasks/include">
+            <Button style={{'color': '#2699FB', 'width': '100%'}} size='lg' variant="outline-dark">Add Tasks <IoIosAddCircle/></Button>
+          </LinkContainer>
           <div style={{
             'margin': '2rem 0 0 0',
             'padding': '1rem',
@@ -157,7 +164,7 @@ class HomePage extends Component {
                 <Card.Body>
                   <h1>
                   {
-                    this.state.tasks
+                    this.completedTasks()
                       .map(t => this.taskDuration(t.data))
                       .reduce((total, d) => total + d, 0)
                   }
