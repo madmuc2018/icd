@@ -29,6 +29,7 @@ export default {
     return result.data.globalUniqueID;
   },
   includeTask: async nTask => {
-    await axios.post(`${API}/fs`, nTask, authHeader());
-  }
+    await axios.post(`${API}/fs/publish`, nTask, authHeader());
+  },
+  getPublishedTasks: async() => (await axios.get(`${API}/fs/published`, authHeader())).data
 };

@@ -1,6 +1,5 @@
 import React from "react";
 import Consent from "../../stores/consent";
-import MyAuthNavBar from '../MyAuthNavBar';
 import { Button } from "react-bootstrap";
 import consentPdf from "../consent.pdf";
 import PDFViewer from "mgr-pdf-viewer-react";

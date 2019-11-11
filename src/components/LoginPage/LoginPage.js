@@ -4,7 +4,6 @@ import Consent from "../../stores/consent";
 import api from "../../Data/api";
 import logo from "../logo.png";
 import FormRow from '../FormRow';
-import MyAuthNavBar from '../MyAuthNavBar';
 import { Button, Container, Image, Row, Col } from "react-bootstrap";
 import AsyncAwareContainer from '../AsyncAwareContainer';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -112,7 +111,6 @@ class LoginPage extends React.Component {
     }
     return (
       <div>
-        <MyAuthNavBar/>
         <Container className="text-center">
           <Image src={logo} style={{margin: '5rem', width: '15rem'}} fluid />
           {
