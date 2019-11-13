@@ -31,6 +31,7 @@
     "qrcode.react": "^0.9.3",
     "react": "^16.11.0",
     "react-bootstrap": "^1.0.0-beta.6",
+    "react-csv": "^1.1.2",
     "react-dates": "^21.3.2",
     "react-dom": "^16.11.0",
     "react-http-request": "^2.0.0",

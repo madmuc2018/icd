@@ -7,6 +7,7 @@ import DetailsPage from "./components/DetailsPage/DetailsPage"
 import RegisterPage from "./components/RegisterPage/RegisterPage"
 import LoginPage from "./components/LoginPage/LoginPage"
 import ConsentPage from "./components/ConsentPage/ConsentPage"
+import CollectorPage from "./components/CollectorPage/CollectorPage"
 import Auth from "./stores/auth";
 
 function PrivateRoute({ component: Component, ...rest }) {
@@ -60,6 +61,7 @@ export default class App extends React.Component {
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/register" component={RegisterPage} />
           <Route exact path="/consent" component={ConsentPage} />
+          <Route exact path="/collect" component={CollectorPage} />
           <LogoutRoute exact path="/logout" />
           <PrivateRoute exact path="/" component={HomePage} />
           <PrivateRoute exact path="/tasks/include" component={IncludePage} />

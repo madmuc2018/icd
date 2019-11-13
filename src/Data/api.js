@@ -31,5 +31,6 @@ export default {
   includeTask: async nTask => {
     await axios.post(`${API}/fs/publish`, nTask, authHeader());
   },
-  getPublishedTasks: async() => (await axios.get(`${API}/fs/published`, authHeader())).data
+  getPublishedTasks: async() => (await axios.get(`${API}/fs/published`, authHeader())).data,
+  collect: async link => (await axios.post(`${API}/collector`, { link })).data,
 };

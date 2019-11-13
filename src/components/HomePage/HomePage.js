@@ -40,7 +40,8 @@ class HomePageInstructor extends Component {
   async componentDidMount() {
     try {
       this.setState({loading: true});
-      const tasks = (await api.getPublishedTasks())
+      const publishedTasks = await api.getPublishedTasks();
+      const tasks = publishedTasks
         .map(tasks => {
           const {
             source : { data: s, guid },
@@ -54,7 +55,6 @@ class HomePageInstructor extends Component {
             guid, name, estimatedStress, duration, completed
           };
         });
-      console.log(tasks);
       // console.log(tasks);
       const chartData = tasks.map(t => ({
         name: t.name, Stress: t.estimatedStress,
