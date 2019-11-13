@@ -8,6 +8,10 @@ import { LinkContainer } from 'react-router-bootstrap';
 import logo from "../logo.png";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
+const estimatedHours = "Estimated hours";
+const duration= "Minutes that Students have spent";
+const estimatedStress = "Estimated Stress";
+
 class HomePage extends Component {
   render() {
     return (window.FOR_INSTRUCTOR) ? <HomePageInstructor/> : <HomePageStudent/>;
@@ -47,19 +51,23 @@ class HomePageInstructor extends Component {
             source : { data: s, guid },
             published
           } = tasks;
-          const { name, estimatedStress } = s;
+          const { name, estimatedStress, estimatedHours } = s;
           const duration = published.reduce((d, p) => typeof p.data.duration === 'number' ? d + p.data.duration : d , 0);
           const completed = published.reduce((a, p) => 
             (typeof p.data.startTime === 'number') && (typeof p.data.endTime === 'number') && a, true );
           return {
-            guid, name, estimatedStress, duration, completed
+            guid, name, estimatedHours, estimatedStress, duration, completed
           };
         });
       // console.log(tasks);
-      const chartData = tasks.map(t => ({
-        name: t.name, Stress: t.estimatedStress,
-        Minutes: this.taskDuration(t)
-      }));
+      const chartData = tasks.map(t => {
+        const group = {};
+        group.name = t.name;
+        group[estimatedStress] = t.estimatedStress;
+        group[duration] = this.taskDuration(t);
+        group[estimatedHours] = t.estimatedHours;
+        return group;
+      });
       this.setState({
         tasks,
         chartData
@@ -303,8 +311,9 @@ class TasksBarChart extends PureComponent {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="Minutes" fill="green" />
-          <Bar dataKey="Stress" fill="red" />
+          <Bar dataKey={estimatedHours} fill="#81e383" />
+          <Bar dataKey={duration} fill="#7e9e7f" />
+          <Bar dataKey={estimatedStress} fill="#e38881" />
         </BarChart>
       </div>
     );
