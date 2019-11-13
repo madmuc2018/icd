@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "https://madmuc2018.github.io/icd/precache-manifest.d58c96d3cc5d001fb67f4d6cb6b5763a.js"
+  "https://madmuc2018.github.io/icd/precache-manifest.be8e5e14f6443f5d2af01e1b201b7f7f.js"
 );
 
 workbox.clientsClaim();
