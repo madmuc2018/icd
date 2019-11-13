@@ -7,6 +7,7 @@ import { IoMdSettings, IoIosAddCircle, IoMdPerson } from 'react-icons/io';
 import { LinkContainer } from 'react-router-bootstrap';
 import logo from "../logo.png";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import utils from '../utils';
 
 const estimatedHours = "Estimated hours";
 const duration= "Minutes that Students have spent";
@@ -32,13 +33,6 @@ class HomePageInstructor extends Component {
 
     this.completedTasks = () => 
       this.state.tasks.filter(t => t.completed)
-
-    this.taskDuration = task => {
-      const toSeconds = task.duration / 1000;
-      const toMinutes = toSeconds / 60;
-      const rounded = Math.round(toMinutes * 100) / 100;
-      return rounded;
-    }
   }
 
   async componentDidMount() {
@@ -64,7 +58,7 @@ class HomePageInstructor extends Component {
         const group = {};
         group.name = t.name;
         group[estimatedStress] = t.estimatedStress;
-        group[duration] = this.taskDuration(t);
+        group[duration] = utils.taskDuration(t.duration);
         group[estimatedHours] = t.estimatedHours;
         return group;
       });
@@ -159,7 +153,7 @@ class HomePageInstructor extends Component {
                 <h1>
                 {
                   this.completedTasks()
-                    .map(t => this.taskDuration(t))
+                    .map(t => utils.taskDuration(t.duration))
                     .reduce((total, d) => total + d, 0)
                 }
                 </h1>

@@ -6,6 +6,7 @@ import { Button, Card, Table, Container } from 'react-bootstrap';
 import moment from 'moment';
 import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
+import utils from '../utils';
 
 const timeFormat = 'MMMM Do YYYY, h:mm:ss a';
 const [START, END, PAUSE, CONTINUE] = ["START", "END", "PAUSE", "CONTINUE"];
@@ -95,13 +96,6 @@ class DetailsPage extends Component {
       return "Error"
     }
 
-    this.taskDuration = () => {
-      const toSeconds = this.state.task.duration / 1000;
-      const toMinutes = toSeconds / 60;
-      const rounded = Math.round(toMinutes * 100) / 100;
-			return `${rounded} minutes`;
-    }
-
     this.handleSubmitStress = async stress => {
       try {
         this.setState({loading: 'Updating ...'});
@@ -158,7 +152,7 @@ class DetailsPage extends Component {
 									  <h2>Task {this.state.task.name} completed</h2>
 									  <br/><br/>
 									  <h5>Time spent</h5>
-									  <h6>{this.taskDuration()}</h6>
+									  <h6>{`${utils.taskDuration(this.state.task.duration)} minutes`}</h6>
 								  </Card.Body>
 								</Card>
 							  <br/><br/>
