@@ -194,12 +194,20 @@ class DetailsPage extends Component {
 									    }
 
 									    .btn-xxl {
-									      margin: 1rem 1rem;
+									      margin: 1rem 0 0 0;
 									      font-size: 3rem;
-									      height: 20rem;
-									      width: 20rem;
+									      height: 15rem;
+									      width: 15rem;
 									      border-radius: 40rem;
 									  	}
+
+                      .btn-xxs {
+                        margin: 10rem 0 0 0;
+                        font-size: 1rem;
+                        height: 5rem;
+                        width: 5rem;
+                        border-radius: 10rem;
+                      }
 								    `}
 								  </style>
 
@@ -213,13 +221,12 @@ class DetailsPage extends Component {
                     : <div/>
                   }
                   { this.state.task.startTime && !this.state.task.endTime && this.state.task.paused ?
-                      <Button variant="flat" size="xxl" onClick={() => this.changeTask(CONTINUE)}>Continue</Button>
+                      <div>
+                        <Button variant="flat" size="xxl" onClick={() => this.changeTask(CONTINUE)}>Continue</Button>
+                        <Button variant="flat" size="xxs" onClick={() => this.changeTask(END)}>Stop</Button>
+                      </div>
                     : <div/>
                   }
-			            { !this.state.task.endTime && this.state.task.startTime ?
-			                <Button variant="flat" size="xxl" onClick={() => this.changeTask(END)}>Stop</Button>
-			              : <div/>
-			            }
 								</div>
 							</div>)
 	          }
