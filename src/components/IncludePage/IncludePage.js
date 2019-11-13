@@ -31,6 +31,7 @@ class IncludePage extends Component {
 
     this.validInput = () => this.state.name.trim().length > 0 
       && this.state.estimatedHours.trim().length > 0
+      && !isNaN(parseFloat(this.state.estimatedHours.trim()))
       && this.state.regulatedStartDate
       && this.state.regulatedEndDate;
 
@@ -39,7 +40,7 @@ class IncludePage extends Component {
         this.setState({loading: 'Including task'});
         const { name, estimatedHours, notes, estimatedStress } = this.state;
         await api.includeTask({ 
-          name, estimatedHours, notes, estimatedStress,
+          name, estimatedHours: parseFloat(estimatedHours.trim()), notes, estimatedStress,
           regulatedStartDate: this.state.regulatedStartDate.valueOf(),
           regulatedEndDate: this.state.regulatedEndDate.valueOf()
         });
@@ -173,7 +174,7 @@ function Guard() {
       </Button>
 
       <Modal show={show} onHide={handleClose}>
-        <Modal.Body> Do not leave name, Estimated Hours, and dates empty </Modal.Body>
+        <Modal.Body> Do not leave name, Estimated Hours, and dates empty and make sure Estimated Hours is a number</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
