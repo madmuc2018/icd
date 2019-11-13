@@ -66,12 +66,15 @@ class IncludePage extends Component {
   render() {
     if (window.FOR_INSTRUCTOR) {
       return (
-        <div style={{'color': '#2699FB'}}>
+        <div style={{
+          'color': '#2699FB',
+          'margin': '5% 0 0 0'
+        }}>
           <h1 className="text-center">Create a New Task</h1>
           <AsyncAwareContainer loading={this.state.loading}>
             <Container style={{
               'minWidth': '100vw',
-              'margin': '3% 0 0 0'
+              'margin': '7% 0 0 0'
             }}>
               <Row>
                 <Col>
