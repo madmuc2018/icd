@@ -5,5 +5,6 @@ export default {
     const toMinutes = toSeconds / 60;
     const rounded = Math.round(toMinutes * 100) / 100;
     return rounded;
-  }
+  },
+  timeout: ms => new Promise(resolve => setTimeout(resolve, ms))
 };

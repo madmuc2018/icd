@@ -3,6 +3,8 @@ import Consent from "../../stores/consent";
 import { Button } from "react-bootstrap";
 import consentPdf from "../consent.pdf";
 import PDFViewer from "mgr-pdf-viewer-react";
+import utils from '../utils';
+import AsyncAwareContainer from '../AsyncAwareContainer';
 
 class ConsentPage extends React.Component {
   state = {
@@ -11,14 +13,23 @@ class ConsentPage extends React.Component {
   increaseScale = () => this.setState(({ scale }) => ({ scale: scale + 0.2 }))
   decreaseScale = () => this.setState(({ scale }) => ({ scale: scale - 0.2 }))
 
-  handleConsent = event => {
-    Consent.doConsent();
-    this.props.history.replace("/login");
+  handleConsent = async event => {
+    try {
+      this.setState({loading: 'Thank you, redirecting to login'});
+      await utils.timeout(1000);
+      Consent.doConsent();
+      this.props.history.replace("/login");
+    } catch (error) {
+      alert(error);
+    } finally {
+      if (!this.componentUnmounted)
+        this.setState({loading: undefined});
+    }
   }
 
   render() {
     return (
-      <div>
+      <AsyncAwareContainer loading={this.state.loading}>
         <style type="text/css">
           {`
             .customViewer {
@@ -90,7 +101,7 @@ class ConsentPage extends React.Component {
             Give consent
           </Button>
         </div>
-      </div>
+      </AsyncAwareContainer>
     );
   }
 }
