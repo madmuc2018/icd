@@ -152,8 +152,8 @@ class HomePageInstructor extends Component {
               <Card.Body>
                 <h1>
                 {
-                  this.completedTasks()
-                    .map(t => utils.taskDuration(t.duration))
+                  this.state.tasks
+                    .map(t => typeof t.duration === 'number' ? utils.taskDuration(t.duration) : 0)
                     .reduce((total, d) => total + d, 0)
                 }
                 </h1>
