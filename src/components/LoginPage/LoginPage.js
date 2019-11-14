@@ -32,7 +32,15 @@ class LoginPage extends React.Component {
     this.handleLogin = async event => {
       try {
         this.setState({loading: 'Logging in'});
-        Auth.setToken(await api.login(this.state.email, this.state.password));
+        const { token, role } = await api.login(this.state.email, this.state.password);
+        if (window.FOR_INSTRUCTOR && role !== 'INSTRUCTOR') {
+          alert("You are not an instructor, please use the app for students instead");
+          return;  
+        } else if (!window.FOR_INSTRUCTOR && role === 'INSTRUCTOR') {
+          alert("You are not a student, please use the app for the instructor instead");
+          return;  
+        }
+        Auth.setToken(token);
         this.props.history.replace("/");
       } catch (error) {
         alert("Invalid email or password");

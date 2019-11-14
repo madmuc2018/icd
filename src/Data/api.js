@@ -13,11 +13,11 @@ export default {
     await axios.post(`${API}/user/register`, { username, password, role });
   },
   login: async(username, password) => {
-    const { data: { token } } = await axios.post(`${API}/user/login`, { username, password });
+    const { data: { token, role } } = await axios.post(`${API}/user/login`, { username, password });
     if (!token) {
       throw new Error('Invalid login response from server');
     }
-    return token;
+    return { token, role };
   },
   getTaskLatest: async guid => {
     const result = await axios.get(`${API}/fs/${guid}/latest`, authHeader());
