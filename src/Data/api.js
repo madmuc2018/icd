@@ -8,29 +8,74 @@ function authHeader() {
   return { headers: { Authorization: `Bearer ${Auth.getToken()}` } };
 }
 
+function axiosError(e, defaultMessage) {
+  if (e.response && e.response.data && e.response.data.message) {
+    throw new Error(e.response.data.message);
+  }
+  throw new Error(defaultMessage ? defaultMessage : 'Invalid response from server');
+}
+
 export default {
   register: async(username, password, role) => {
-    await axios.post(`${API}/user/register`, { username, password, role });
+    try {
+      await axios.post(`${API}/user/register`, { username, password, role });
+    } catch (e) {
+      axiosError(e);
+    }
   },
   login: async(username, password) => {
-    const { data: { token, role } } = await axios.post(`${API}/user/login`, { username, password });
-    if (!token) {
-      throw new Error('Invalid login response from server');
+    try {
+      const { data: { token, role } } = await axios.post(`${API}/user/login`, { username, password });
+      if (!token) {
+        throw new Error('Invalid login response from server');
+      }
+      return { token, role };
+    } catch (e) {
+      axiosError(e);
     }
-    return { token, role };
   },
   getTaskLatest: async guid => {
-    const result = await axios.get(`${API}/fs/${guid}/latest`, authHeader());
-    return result.data;
+    try {
+      const result = await axios.get(`${API}/fs/${guid}/latest`, authHeader());
+      return result.data;
+    } catch (e) {
+      axiosError(e);
+    }
   },
-  getTasks: async() => (await axios.get(`${API}/fs`, authHeader())).data,
+  getTasks: async() => {
+    try {
+      return (await axios.get(`${API}/fs`, authHeader())).data;
+    } catch (e) {
+      axiosError(e);
+    }
+  },
   updateTask: async(guid, nTask) => {
-    const result = await axios.put(`${API}/fs/${guid}`, nTask, authHeader());
-    return result.data.globalUniqueID;
+    try {
+      const result = await axios.put(`${API}/fs/${guid}`, nTask, authHeader());
+      return result.data.globalUniqueID;
+    } catch (e) {
+      axiosError(e);
+    }
   },
   includeTask: async nTask => {
-    await axios.post(`${API}/fs/publish`, nTask, authHeader());
+    try {
+      await axios.post(`${API}/fs/publish`, nTask, authHeader());
+    } catch (e) {
+      axiosError(e);
+    }
   },
-  getPublishedTasks: async() => (await axios.get(`${API}/fs/published`, authHeader())).data,
-  collect: async link => (await axios.post(`${API}/collector`, { link })).data,
+  getPublishedTasks: async() => {
+    try {
+      return (await axios.get(`${API}/fs/published`, authHeader())).data;
+    } catch (e) {
+      axiosError(e);
+    }
+  },
+  collect: async link => {
+    try {
+      return (await axios.post(`${API}/collector`, { link })).data;
+    } catch (e) {
+      axiosError(e);
+    }
+  },
 };
