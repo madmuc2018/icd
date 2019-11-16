@@ -30,7 +30,17 @@ class RegisterPage extends React.Component {
       try {
         this.setState({loading: 'Registering'});
         await api.register(this.state.email, this.state.password, this.state.instructor ? 'INSTRUCTOR' : 'student');
-        Auth.setToken(await api.login(this.state.email, this.state.password));
+
+        this.setState({loading: 'Logging in'});
+        const { token, role } = await api.login(this.state.email, this.state.password);
+        if (window.FOR_INSTRUCTOR && role !== 'INSTRUCTOR') {
+          alert("Successfully registered but you are not an instructor, please use the app for students instead");
+          return;  
+        } else if (!window.FOR_INSTRUCTOR && role === 'INSTRUCTOR') {
+          alert("Successfully registered but you are not a student, please use the app for the instructor instead");
+          return;  
+        }
+        Auth.setToken(token);
         this.props.history.replace("/");
       } catch (error) {
         alert(error);
