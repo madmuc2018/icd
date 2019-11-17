@@ -7,9 +7,69 @@ import moment from 'moment';
 import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
 import utils from '../utils';
+import StateMachine from 'javascript-state-machine';
 
 const timeFormat = 'MMMM Do YYYY, h:mm:ss a';
-const [START, END, PAUSE, CONTINUE] = ["START", "END", "PAUSE", "CONTINUE"];
+
+//states
+const [CREATED, INPROGRESS, PAUSED, FINISHED] = ['created', 'inProgress', 'paused', 'finished'];
+// transitions
+const [START, STOP, PAUSE, CONTINUE] = ['start', 'stop', 'pause', 'continue'];
+
+class TaskController {
+  constructor(task) {
+    this.task = task;
+
+    const allowedStatuses = s => [CREATED, INPROGRESS, PAUSED, FINISHED].includes(s);
+
+    this.fsm = new StateMachine({
+      init: allowedStatuses(task.status) ? task.status : CREATED,
+      transitions: [
+        { name: START,    from: CREATED,    to: INPROGRESS },
+        { name: PAUSE,    from: INPROGRESS, to: PAUSED },
+        { name: CONTINUE, from: PAUSED,     to: INPROGRESS },
+        { name: STOP,     from: PAUSED,     to: FINISHED }
+      ],
+      methods: {
+        onStart() {
+          task.startTime = (new Date()).getTime();
+          task.status = this.state;
+        },
+        onPause() {
+          const timeNow = (new Date()).getTime();
+          if (!task.duration) {
+            const diff = timeNow - task.startTime;
+            task.duration = diff;
+          }
+          else {
+            const diff = timeNow - task.pauseTime;
+            task.duration += diff;
+          }
+          task.pauseTime = timeNow;
+
+          task.status = this.state;
+        },
+        onContinue() {
+          task.status = this.state;
+        },
+        onStop() {
+          const timeNow = (new Date()).getTime();
+          task.endTime = timeNow;
+          if (!task.duration) {
+            const diff = timeNow - task.startTime;
+            task.duration = diff;
+          }
+          else if (this.state !== PAUSED) {
+            const diff = timeNow - task.pauseTime;
+            task.duration += diff;
+          }
+
+          task.status = this.state;
+        },
+      }
+    });
+  }
+}
 
 class DetailsPage extends Component {
   constructor() {
@@ -25,56 +85,22 @@ class DetailsPage extends Component {
     this.changeTask = async (operation) => {
       try {
         this.setState({loading: 'Updating ...'});
-        const task = this.state.task;
-        const timeNow = (new Date()).getTime();
-
+        const controller = new TaskController(this.state.task);
+        let res;
         switch(operation) {
-          case START:
-            if (task.startTime)
-              return console.warn("Already started")
-            task.startTime = timeNow;
-            break;
-          case END:
-            if (task.endTime)
-              return console.warn("Already end");
-            task.endTime = timeNow;
-            if (!task.duration) {
-              const diff = timeNow - task.startTime;
-              task.duration = diff;
-            }
-            else {
-              if (!task.paused) {
-                const diff = timeNow - task.pauseTime;
-                task.duration += diff;
-              }
-            }
-            break;
-          case PAUSE:
-            if (task.paused)
-              return console.warn("Already paused");
-            task.paused = true;
-            if (!task.duration) {
-              const diff = timeNow - task.startTime;
-              task.duration = diff;
-            }
-            else {
-              const diff = timeNow - task.pauseTime;
-              task.duration += diff;
-            }
-            task.pauseTime = timeNow;
-            break;
-          case CONTINUE:
-            if (!task.startTime)
-              return console.warn("Has not started");
-            if (!task.paused)
-              return console.warn("Already continued");
-            task.paused = false;
-            break;
+          case START: res = controller.fsm.start(); break;
+          case STOP: res = controller.fsm.stop(); break;
+          case PAUSE: res = controller.fsm.pause(); break;
+          case CONTINUE: res = controller.fsm.continue(); break;
           default:
             return console.warn(`No ${operation}`);
         }
 
-        const nGuid = await api.updateTask(this.state.guid, task);
+        if (!res) {
+          return;
+        }
+
+        const nGuid = await api.updateTask(this.state.guid, controller.task);
         this.props.history.replace(`/tasks/${nGuid}/details`);
         // Not sure why but history replace does not update guid
         this.setState({guid: nGuid});
@@ -87,13 +113,20 @@ class DetailsPage extends Component {
     }
 
     this.taskStatus = () => {
-      if (!this.state.task.startTime)
-        return "You haven't started this task"
-      if (this.state.task.startTime && !this.state.task.endTime)
-        return "You're currently working on this task"
-      if (this.state.task.startTime && this.state.task.endTime)
-        return "You've completed this task"
-      return "Error"
+      const state = (new TaskController(this.state.task)).fsm.state;
+
+      switch(state) {
+        case CREATED:
+          return "You haven't started this task";
+        case INPROGRESS:
+          return "You're currently working on this task";
+        case PAUSED:
+          return "You're currently working on this task";
+        case FINISHED:
+          return "You've completed this task";
+        default:
+          return "Error"
+      }
     }
 
     this.handleSubmitStress = async stress => {
@@ -138,6 +171,39 @@ class DetailsPage extends Component {
   }
 
   render() {
+    const Buttons = () => {
+      const transitions = (new TaskController(this.state.task)).fsm.transitions();
+      return <div>
+        <style type="text/css">
+          {`
+            .btn-flat {
+              background-color: #2799F9;
+              color: white;
+            }
+
+            .btn-xxl {
+              margin: 1rem 0 0 0;
+              font-size: 3rem;
+              height: 15rem;
+              width: 15rem;
+              border-radius: 40rem;
+            }
+
+            .btn-xxs {
+              margin: 10rem 0 0 0;
+              font-size: 1rem;
+              height: 5rem;
+              width: 5rem;
+              border-radius: 10rem;
+            }
+          `}
+        </style>
+        { transitions.includes(START) && <Button variant="flat" size="xxl" onClick={() => this.changeTask(START)}>Start</Button> }
+        { transitions.includes(PAUSE) && <Button variant="flat" size="xxl" onClick={() => this.changeTask(PAUSE)}>Pause</Button> }
+        { transitions.includes(CONTINUE) && <Button variant="flat" size="xxl" onClick={() => this.changeTask(CONTINUE)}>Continue</Button> }
+        { transitions.includes(STOP) && <Button variant="flat" size="xxs" onClick={() => this.changeTask(STOP)}>Stop</Button> }
+      </div>;
+    };
     return (
       <div>
         <MyNavBar/>
@@ -178,50 +244,7 @@ class DetailsPage extends Component {
 									  <h6>Start Date: {this.state.task.startTime ? moment(this.state.task.startTime).format(timeFormat) : ''} | End Date: {this.state.task.endTime ? moment(this.state.task.endTime).format(timeFormat) : ''}</h6>
 								  </Card.Body>
 								</Card>
-
-								<div>
-								  <style type="text/css">
-								    {`
-									    .btn-flat {
-									      background-color: #2799F9;
-									      color: white;
-									    }
-
-									    .btn-xxl {
-									      margin: 1rem 0 0 0;
-									      font-size: 3rem;
-									      height: 15rem;
-									      width: 15rem;
-									      border-radius: 40rem;
-									  	}
-
-                      .btn-xxs {
-                        margin: 10rem 0 0 0;
-                        font-size: 1rem;
-                        height: 5rem;
-                        width: 5rem;
-                        border-radius: 10rem;
-                      }
-								    `}
-								  </style>
-
-
-								  { !this.state.task.startTime ?
-			            		<Button variant="flat" size="xxl" onClick={() => this.changeTask(START)}>Start</Button>
-			              : <div/>
-			            }
-                  { this.state.task.startTime && !this.state.task.endTime && !this.state.task.paused ?
-                      <Button variant="flat" size="xxl" onClick={() => this.changeTask(PAUSE)}>Pause</Button>
-                    : <div/>
-                  }
-                  { this.state.task.startTime && !this.state.task.endTime && this.state.task.paused ?
-                      <div>
-                        <Button variant="flat" size="xxl" onClick={() => this.changeTask(CONTINUE)}>Continue</Button>
-                        <Button variant="flat" size="xxs" onClick={() => this.changeTask(END)}>Stop</Button>
-                      </div>
-                    : <div/>
-                  }
-								</div>
+                <Buttons />
 							</div>)
 	          }
 						</Container>
@@ -298,138 +321,5 @@ class StressCollector extends Component {
     );
   }
 }
-
-// import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider';
-// import { Handle, Track, Tick } from './SliderComponents';
-
-// const sliderStyle: React.CSSProperties = {
-//   position: 'relative',
-//   height: '400px',
-//   marginLeft: '45%'
-// };
-// const railStyle: React.CSSProperties = {
-//   position: 'absolute',
-//   width: '14px',
-//   height: '100%',
-//   cursor: 'pointer',
-//   marginLeft: '-1px',
-//   borderRadius: '7px',
-//   backgroundColor: 'rgb(155,155,155)'
-// };
-// const domain= [0, 10];
-// const formatTicks = d => d;
-
-// class StressCollector extends Component {
-// 	constructor() {
-//     super();
-
-//     // react seems to be slow and inconsistent when assigning an object to state,
-//     // set task: null and do console.log in the jsx to see
-//     this.state = {
-//       values: [5]
-//     };
-
-//     this.handleSliderChange = values => {
-// 	    this.setState({ values });
-// 	  };
-// 	}
-
-// 	render() {
-// 		const {
-//       state: { values }
-//     } = this;
-
-//     return (
-//     	<div>
-// 	    	<h6 style={{'color': '#2699FB'}}>Drag the scroll bar up to indicate how stressful you felt in completing this activity</h6>
-// 				<div style={{ margin: 20 }}>
-// 	        <Slider
-// 	          mode={1}
-// 	          step={0.1}
-// 	          reversed={true}
-// 	          vertical={true}
-// 	          domain={domain}
-// 	          rootStyle={sliderStyle}
-// 	          onChange={this.handleSliderChange}
-// 	          values={values}
-// 	        >
-// 	          <Rail>
-// 	            {({ getRailProps }) => (
-// 	              <div style={railStyle} {...getRailProps()} />
-// 	            )}
-// 	          </Rail>
-// 	          <Handles>
-// 	            {({ handles, getHandleProps }) => (
-// 	              <div className="slider-handles">
-// 	                {handles.map(handle => (
-// 	                  <Handle
-// 	                    key={handle.id}
-// 	                    handle={handle}
-// 	                    domain={domain}
-// 	                    getHandleProps={getHandleProps}
-// 	                  />
-// 	                ))}
-// 	              </div>
-// 	            )}
-// 	          </Handles>
-// 	          <Tracks left={false}>
-// 	            {({ tracks, getTrackProps }) => (
-// 	              <div className="slider-tracks">
-// 	                {tracks.map(({ id, source, target }) => (
-// 	                  <Track
-// 	                    key={id}
-// 	                    source={source}
-// 	                    target={target}
-// 	                    getTrackProps={getTrackProps}
-// 	                  />
-// 	                ))}
-// 	              </div>
-// 	            )}
-// 	          </Tracks>
-// 	          <Ticks values={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}>
-// 	            {({ ticks }) => (
-// 	              <div className="slider-ticks">
-// 	                {ticks.map(tick => (
-// 	                  <Tick
-// 	                    key={tick.id}
-// 	                    format={formatTicks}
-// 	                    tick={tick}
-// 	                    count={ticks.length}
-// 	                  />
-// 	                ))}
-// 	              </div>
-// 	            )}
-// 	          </Ticks>
-// 	        </Slider>
-// 	      </div>
-
-// 	      <Table bordered style={{'color': '#2699FB'}}>
-// 				  <thead>
-// 				    <tr>
-// 				      <th>Score</th>
-// 				      <th>Meaning</th>
-// 				    </tr>
-// 				  </thead>
-// 				  <tbody>
-// 				    <tr>
-// 				      <td>1 - 4 = low stress</td>
-// 				      <td>You are likely not psychologically distressed</td>
-// 				    </tr>
-// 				    <tr>
-// 				      <td>4.1 - 7 = moderate stress</td>
-// 				      <td>You are likely mildly psychologically distressed</td>
-// 				    </tr>
-// 				    <tr>
-// 				      <td>7.1 - 10 = high stress</td>
-// 				      <td>You are likely to be severely psychologically distressed</td>
-// 				    </tr>
-// 				  </tbody>
-// 				</Table>
-
-// 	      <Button style={{'backgroundColor': '#2799F9'}} onClick={() => this.props.submitStress(this.state.values[0])}>Submit</Button>
-//       </div>
-//     );
-// 	}
-// }
 
 export default DetailsPage;
