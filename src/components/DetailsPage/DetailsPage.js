@@ -2,12 +2,12 @@ import React, { Component } from "react";
 import api from "../../Data/api";
 import MyNavBar from '../MyNavBar';
 import AsyncAwareContainer from '../AsyncAwareContainer';
-import { Button, Card, Table, Container } from 'react-bootstrap';
-import moment from 'moment';
-import Nouislider from "nouislider-react";
-import "nouislider/distribute/nouislider.css";
-import utils from '../utils';
+import { Button, Card, Table, Container, Form } from 'react-bootstrap';
 import StateMachine from 'javascript-state-machine';
+import StressSlider from '../StressSlider';
+import moment from "moment";
+import momentDurationFormatSetup from "moment-duration-format";
+momentDurationFormatSetup(moment);
 
 const timeFormat = 'MMMM Do YYYY, h:mm:ss a';
 
@@ -129,11 +129,12 @@ class DetailsPage extends Component {
       }
     }
 
-    this.handleSubmitStress = async stress => {
+    this.handleSubmitStress = async (stress, comments) => {
       try {
         this.setState({loading: 'Updating ...'});
         const task = this.state.task;
         task.stress = stress;
+        task.comments = comments;
 
         await api.updateTask(this.state.guid, task);
         this.props.history.replace(`/`);
@@ -210,15 +211,34 @@ class DetailsPage extends Component {
           <AsyncAwareContainer loading={this.state.loading}>
           	<Container className="text-center">
           	{
-          		(this.state.task.startTime && this.state.task.endTime) ?
+          		(this.state.task.status === 'finished') ?
 
           		(<div>
 					      <Card style={{'backgroundColor': '#2799F9', 'color': 'white'}}>
           				<Card.Body>
-									  <h2>Task {this.state.task.name} completed</h2>
-									  <br/><br/>
-									  <h5>Time spent</h5>
-									  <h6>{`${utils.taskDuration(this.state.task.duration)} minutes`}</h6>
+									  <h4>Task {this.state.task.name} completed, time spent: {moment.duration(this.state.task.duration).format("m [minute]")}</h4>
+                    <Table bordered style={{'color': 'white'}}>
+                      <thead>
+                        <tr>
+                          <th>Score</th>
+                          <th>Meaning</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>1 - 4 = low stress</td>
+                          <td>You are likely <b>not</b> psychologically distressed</td>
+                        </tr>
+                        <tr>
+                          <td>4.1 - 7 = moderate stress</td>
+                          <td>You are likely <b>mildly</b> psychologically distressed</td>
+                        </tr>
+                        <tr>
+                          <td>7.1 - 10 = high stress</td>
+                          <td>You are likely to be <b>severely</b> psychologically distressed</td>
+                        </tr>
+                      </tbody>
+                    </Table>
 								  </Card.Body>
 								</Card>
 							  <br/><br/>
@@ -256,7 +276,8 @@ class DetailsPage extends Component {
 
 class StressCollector extends Component {
 	state = {
-    value: 5
+    value: 5,
+    comments: ""
   };
 
   onEnd = () => (render, handle, value, un, percent) => {
@@ -272,51 +293,20 @@ class StressCollector extends Component {
     		<div style={{
     			margin: '2rem',
     			display: 'flex',
-				  justifyContent: 'center'
+				  justifyContent: 'center',
+          'height': '35rem'
 				}}>
-		      <Nouislider
-		      	className="text-center"
-		      	style={{'height': '35rem'}}
-		        start={this.state.value}
-		        orientation="vertical"
-		        direction="rtl"
-		        range={{
-		          min: 0,
-		          max: 10
-		        }}
-		        step={0.1}
-		        pips={{
-		        	mode: 'values',
-			        values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-			        density: 1
-		        }}
-		        onEnd={this.onEnd()}
-		      />
+          <StressSlider start={this.state.value} onEnd={this.onEnd} />
 	      </div>
-	      <Table bordered style={{'color': '#2699FB'}}>
-				  <thead>
-				    <tr>
-				      <th>Score</th>
-				      <th>Meaning</th>
-				    </tr>
-				  </thead>
-				  <tbody>
-				    <tr>
-				      <td>1 - 4 = low stress</td>
-				      <td>You are likely not psychologically distressed</td>
-				    </tr>
-				    <tr>
-				      <td>4.1 - 7 = moderate stress</td>
-				      <td>You are likely mildly psychologically distressed</td>
-				    </tr>
-				    <tr>
-				      <td>7.1 - 10 = high stress</td>
-				      <td>You are likely to be severely psychologically distressed</td>
-				    </tr>
-				  </tbody>
-				</Table>
-
-	      <Button style={{'backgroundColor': '#2799F9'}} onClick={() => this.props.submitStress(this.state.value)}>Submit</Button>
+        <Form.Group>
+          <Form.Control
+            placeholder='Do you have any comments? Were you able to time the duration of the task accurately? If no - please indicate the approximate duration that was recorded, but not spent on task (e.g. you forgot to "pause", while embarking on another activity unconnected to the task)'
+            onChange={e => this.setState({comments: e.target.value})}
+            as="textarea"
+            rows="4"
+          />
+        </Form.Group>
+	      <Button style={{'backgroundColor': '#2799F9'}} onClick={() => this.props.submitStress(this.state.value, this.state.comments)}>Submit</Button>
       </div>
     );
   }

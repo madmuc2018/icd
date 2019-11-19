@@ -3,11 +3,11 @@ import api from "../../Data/api";
 import FormRow from '../FormRow';
 import AsyncAwareContainer from '../AsyncAwareContainer';
 import { Container, Button, Modal, Row, Col, Table, Card } from 'react-bootstrap';
-import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
 import { DateRangePicker } from 'react-dates';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
+import StressSlider from '../StressSlider';
 
 class IncludePage extends Component {
   constructor(props) {
@@ -91,31 +91,15 @@ class IncludePage extends Component {
                     focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
                     onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
                   />
+                  <h6 style={{'textAlign': 'right'}}>Selected stress score: {this.state.estimatedStress}</h6>
                 </Col>
 
-                <Col xl={1}>
-                  <Nouislider
-                    className="text-center"
-                    style={{'height': '100%'}}
-                    start={this.state.estimatedStress}
-                    orientation="vertical"
-                    direction="rtl"
-                    range={{
-                      min: 0,
-                      max: 10
-                    }}
-                    step={0.1}
-                    pips={{
-                      mode: 'values',
-                      values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                      density: 1
-                    }}
-                    onEnd={this.onEnd()}
-                  />
-                </Col>
+
+                <StressSlider start={this.state.estimatedStress} onEnd={this.onEnd} />
+
 
                 <Col>
-                  <Card className="text-center" body>What level of stress do you think your students may experience in completing this task?</Card>
+                  <Card className="text-center" body><b>What level of stress do you think your students may experience in completing this task?</b></Card>
                   <br/>
                   <h5>Interpretation of the stress scroll bar:</h5>
                   <Table bordered style={{'color': '#2699FB'}}>
@@ -128,15 +112,15 @@ class IncludePage extends Component {
                     <tbody>
                       <tr>
                         <td>1 - 4 = low stress</td>
-                        <td>Student are likely not psychologically distressed</td>
+                        <td>Student may <b>not</b> be psychologically distressed</td>
                       </tr>
                       <tr>
                         <td>4.1 - 7 = moderate stress</td>
-                        <td>Student are likely mildly psychologically distressed</td>
+                        <td>Student may be <b>mildly</b> psychologically distressed</td>
                       </tr>
                       <tr>
                         <td>7.1 - 10 = high stress</td>
-                        <td>Student are likely to be severely psychologically distressed</td>
+                        <td>Student may  be <b>severely</b> psychologically distressed</td>
                       </tr>
                     </tbody>
                   </Table>
