@@ -3,7 +3,7 @@ import Auth from "../../stores/auth";
 import api from "../../Data/api";
 import FormRow from '../FormRow';
 import AsyncAwareContainer from '../AsyncAwareContainer';
-import { Button, Container, Form } from "react-bootstrap";
+import { Button, Container, Form, InputGroup, FormControl } from "react-bootstrap";
 
 class RegisterPage extends React.Component {
   constructor(props) {
@@ -29,10 +29,10 @@ class RegisterPage extends React.Component {
     this.handleRegister = async event => {
       try {
         this.setState({loading: 'Registering'});
-        await api.register(this.state.email, this.state.password, this.state.instructor ? 'INSTRUCTOR' : 'student');
+        await api.register(`${this.state.email}@usask.ca`, this.state.password, this.state.instructor ? 'INSTRUCTOR' : 'student');
 
         this.setState({loading: 'Logging in'});
-        const { token, role } = await api.login(this.state.email, this.state.password);
+        const { token, role } = await api.login(`${this.state.email}@usask.ca`, this.state.password);
         if (window.FOR_INSTRUCTOR && role !== 'INSTRUCTOR') {
           alert("Successfully registered but you are not an instructor, please use the app for students instead");
           return;  
@@ -61,7 +61,16 @@ class RegisterPage extends React.Component {
         <Container>
           <h1>Register</h1>
           <AsyncAwareContainer loading={this.state.loading}>
-            <FormRow name="email" placeholder="email" onChange={this.handleChange} />
+            <InputGroup className="mb-3">
+              <FormControl
+                name="email"
+                placeholder="User ID"
+                onChange={this.handleChange}
+              />
+              <InputGroup.Append>
+                <InputGroup.Text>@usask.ca</InputGroup.Text>
+              </InputGroup.Append>
+            </InputGroup>
             <FormRow name="password" placeholder="password" type="password" onChange={this.handleChange} />
             <Form.Check
               name="instructor"
