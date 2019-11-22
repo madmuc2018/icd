@@ -43,7 +43,7 @@ class RegisterPage extends React.Component {
         Auth.setToken(token);
         this.props.history.replace("/");
       } catch (error) {
-        alert(error);
+        alert(error.message);
       } finally {
         if (!this.componentUnmounted)
           this.setState({loading: undefined});

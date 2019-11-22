@@ -7,6 +7,7 @@ import { IoMdSettings, IoIosAddCircle, IoMdPerson } from 'react-icons/io';
 import { LinkContainer } from 'react-router-bootstrap';
 import logo from "../logo.png";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import utils from '../utils';
 import moment from "moment";
 import momentDurationFormatSetup from "moment-duration-format";
 momentDurationFormatSetup(moment);
@@ -25,7 +26,7 @@ function millisecsToHours(mil) {
 
 class HomePage extends Component {
   render() {
-    return (window.FOR_INSTRUCTOR) ? <HomePageInstructor/> : <HomePageStudent/>;
+    return (window.FOR_INSTRUCTOR) ? <HomePageInstructor routerHistory={this.props.history} /> : <HomePageStudent routerHistory={this.props.history}/>;
   }
 }
 
@@ -79,7 +80,7 @@ class HomePageInstructor extends Component {
         chartData
       });
     } catch (error) {
-      alert(error);
+      utils.checkErrorForLogout(error, this.props.routerHistory);
     } finally {
       if (!this.componentUnmounted)
         this.setState({loading: undefined});
@@ -223,7 +224,7 @@ class HomePageStudent extends Component {
         tasks
       });
     } catch (error) {
-      alert(error);
+      utils.checkErrorForLogout(error, this.props.routerHistory);
     } finally {
       if (!this.componentUnmounted)
         this.setState({loading: undefined});

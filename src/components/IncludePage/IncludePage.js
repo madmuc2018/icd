@@ -46,7 +46,7 @@ class IncludePage extends Component {
         });
         this.props.history.push("/");
       } catch (error) {
-        alert(error);
+        alert(error.message);
       } finally {
         if (!this.componentUnmounted)
           this.setState({loading: undefined});

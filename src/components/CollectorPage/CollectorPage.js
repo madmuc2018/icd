@@ -26,7 +26,7 @@ class CollectorPage extends React.Component {
         const csvs = await api.collect(this.state.credentials);
         this.setState({ csvs });
       } catch (error) {
-        alert(error);
+        alert(error.message);
       } finally {
         if (!this.componentUnmounted)
           this.setState({loading: undefined});

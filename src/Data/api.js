@@ -8,11 +8,16 @@ function authHeader() {
   return { headers: { Authorization: `Bearer ${Auth.getToken()}` } };
 }
 
+function ApiException(message, status) {
+  this.message = message;
+  this.status = status;
+}
+
 function axiosError(e, defaultMessage) {
   if (e.response && e.response.data && e.response.data.message) {
-    throw new Error(e.response.data.message);
+    throw new ApiException(e.response.data.message, e.response.status);
   }
-  throw new Error(defaultMessage ? defaultMessage : 'Invalid response from server');
+  throw new ApiException(defaultMessage ? defaultMessage : 'Invalid response from server');
 }
 
 export default {

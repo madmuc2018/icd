@@ -20,7 +20,7 @@ class ConsentPage extends React.Component {
       Consent.doConsent();
       this.props.history.replace("/login");
     } catch (error) {
-      alert(error);
+      alert(error.message);
     } finally {
       if (!this.componentUnmounted)
         this.setState({loading: undefined});

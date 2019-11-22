@@ -5,6 +5,7 @@ import AsyncAwareContainer from '../AsyncAwareContainer';
 import { Button, Card, Table, Container, Form } from 'react-bootstrap';
 import StateMachine from 'javascript-state-machine';
 import StressSlider from '../StressSlider';
+import utils from '../utils';
 import moment from "moment";
 import momentDurationFormatSetup from "moment-duration-format";
 momentDurationFormatSetup(moment);
@@ -105,7 +106,7 @@ class DetailsPage extends Component {
         // Not sure why but history replace does not update guid
         this.setState({guid: nGuid});
       } catch (error) {
-        alert(error);
+        alert(error.message);
       } finally {
         if (!this.componentUnmounted)
           this.setState({loading: undefined});
@@ -139,7 +140,7 @@ class DetailsPage extends Component {
         await api.updateTask(this.state.guid, task);
         this.props.history.replace(`/`);
       } catch (error) {
-        alert(error);
+        alert(error.message);
       } finally {
         if (!this.componentUnmounted)
           this.setState({loading: undefined});
@@ -160,7 +161,7 @@ class DetailsPage extends Component {
       	task: task.data
       });
     } catch (error) {
-      alert(error);
+      utils.checkErrorForLogout(error, this.props.history);
     } finally {
       if (!this.componentUnmounted)
         this.setState({loading: undefined});

@@ -43,7 +43,7 @@ class LoginForm extends React.Component {
         Auth.setToken(token);
         this.props.routerHistory.replace("/");
       } catch (error) {
-        alert(error);
+        alert(error.message);
       } finally {
         if (!this.componentUnmounted)
           this.setState({loading: undefined});
