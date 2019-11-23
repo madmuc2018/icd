@@ -180,15 +180,35 @@ class DetailsPage extends Component {
       }
     }
 
-    this.handleSubmitStress = async (stress, comments) => {
+    this.handleSubmitStress = redirect => async (stress, comment) => {
       try {
         this.setState({loading: 'Updating ...'});
         const task = this.state.task;
-        task.stress = stress;
-        task.comments = comments;
 
-        await api.updateTask(this.state.guid, task);
-        this.props.history.replace(`/`);
+        if (!task.stresses) {
+          task.stresses = [stress]
+        } else {
+          task.stresses.push(stress);
+        }
+
+        if (!task.comments) {
+          task.comments = [comment]
+        } else {
+          task.comments.push(comment);
+        }
+
+        // stress keeps mean stress
+        task.stress = task.stresses.reduce((total, s) => s + total, 0) / task.stresses.length
+
+        const nGuid = await api.updateTask(this.state.guid, task);
+
+        if (redirect) {
+          this.props.history.replace(`/`);
+        } else {
+          this.props.history.replace(`/tasks/${nGuid}/details`);
+          // Not sure why but history replace does not update guid
+          this.setState({guid: nGuid});
+        }
       } catch (error) {
         alert(error.message);
       } finally {
@@ -272,6 +292,7 @@ class DetailsPage extends Component {
         { transitions.includes(PAUSE) && <Button variant="flat" size="xxl" onClick={() => this.changeTask(PAUSE)}>Pause</Button> }
         { transitions.includes(CONTINUE) && <Button variant="flat" size="xxl" onClick={() => this.changeTask(CONTINUE)}>Continue</Button> }
         { transitions.includes(STOP) && <Button variant="flat" size="xxs" onClick={() => this.changeTask(STOP)}>Stop</Button> }
+        { this.state.task.status === PAUSED && <StressCollector submitStress={this.handleSubmitStress(false)} /> }
       </div>;
     };
     return (
@@ -316,7 +337,7 @@ class DetailsPage extends Component {
 									(typeof this.state.task.stress === 'number') ?
 									<h6 style={{'color': '#2699FB'}}>Submitted stress level: {this.state.task.stress}</h6>
 									:
-									<StressCollector submitStress={this.handleSubmitStress} />
+									<StressCollector submitStress={this.handleSubmitStress(true)} />
 								}
           		</div>)
 
