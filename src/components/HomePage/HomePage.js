@@ -8,6 +8,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import logo from "../logo.png";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import utils from '../utils';
+import RefreshButton from '../RefreshButton';
 import moment from "moment";
 import momentDurationFormatSetup from "moment-duration-format";
 momentDurationFormatSetup(moment);
@@ -239,6 +240,7 @@ class HomePageStudent extends Component {
     return (
       <div>
         <MyNavBar/>
+        <RefreshButton />
         <Container>
           <AsyncAwareContainer loading={this.state.loading}>
             <h4 style={{'color': '#2699FB'}}>Active tasks</h4>

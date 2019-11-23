@@ -6,6 +6,7 @@ import { Button, Card, Table, Container, Form } from 'react-bootstrap';
 import StateMachine from 'javascript-state-machine';
 import StressSlider from '../StressSlider';
 import utils from '../utils';
+import RefreshButton from '../RefreshButton';
 import moment from "moment";
 import momentDurationFormatSetup from "moment-duration-format";
 momentDurationFormatSetup(moment);
@@ -298,6 +299,7 @@ class DetailsPage extends Component {
     return (
       <div>
         <MyNavBar/>
+          <RefreshButton />
           <AsyncAwareContainer loading={this.state.loading}>
           	<Container className="text-center">
           	{
