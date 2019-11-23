@@ -18,14 +18,21 @@ const [CREATED, INPROGRESS, PAUSED, FINISHED] = ['created', 'inProgress', 'pause
 const [START, STOP, PAUSE, CONTINUE] = ['start', 'stop', 'pause', 'continue'];
 
 class TaskController {
-  constructor(task) {
+  constructor(task, forced) {
     this.task = task;
 
     const allowedStatuses = s => [CREATED, INPROGRESS, PAUSED, FINISHED].includes(s);
 
     this.fsm = new StateMachine({
       init: allowedStatuses(task.status) ? task.status : CREATED,
-      transitions: [
+      transitions: forced ?
+      [
+        { name: 'forceStop',    from: CREATED,    to: FINISHED },
+        { name: 'forceStop',    from: INPROGRESS, to: FINISHED },
+        { name: 'forceStop',    from: PAUSED,     to: FINISHED },
+      ]
+      :
+      [
         { name: START,    from: CREATED,    to: INPROGRESS },
         { name: PAUSE,    from: INPROGRESS, to: PAUSED },
         { name: CONTINUE, from: PAUSED,     to: INPROGRESS },
@@ -56,20 +63,63 @@ class TaskController {
         onStop() {
           const timeNow = (new Date()).getTime();
           task.endTime = timeNow;
-          if (!task.duration) {
-            const diff = timeNow - task.startTime;
-            task.duration = diff;
-          }
-          else if (this.state !== PAUSED) {
-            const diff = timeNow - task.pauseTime;
-            task.duration += diff;
-          }
+          task.duration += timeNow - task.pauseTime;
 
           task.status = this.state;
         },
+        onForceStop(lifecycle) {
+          //after regulatedEndtime
+
+          switch (lifecycle.from) {
+            case CREATED:
+            // no startTime, no endTime
+            task.duration = 0;
+            break;
+            case INPROGRESS:
+            task.endTime = task.regulatedEndDate;
+            task.duration = task.regulatedEndDate - task.regulatedStartDate;
+            break;
+            case PAUSED:
+            // when task enters PAUSED state it should be given a duration
+            task.endTime = task.pauseTime;
+            break;
+            default:
+            alert('Error onForceStop');
+            break;
+          }
+
+          task.status = this.state;
+        }
       }
     });
   }
+}
+
+// function taskIsWithinValidTimeReload(task) {
+//   const timenow = (new Date()).getTime();
+//   const beforeStartDate = timenow < task.regulatedStartDate;
+//   if (beforeStartDate) {
+//     alert("You cannot start before the regulated start date of the task");
+//     window.location.reload()
+//   }
+//   const afterEndDate = task.regulatedEndDate < timenow;
+//   if (afterEndDate) {
+//     alert("The deadline for the task is over");
+//     window.location.reload()
+//   }
+// }
+
+function checkRegulatedTime(task) {
+  const timenow = (new Date()).getTime();
+  const beforeStartDate = timenow < task.regulatedStartDate;
+  const afterEndDate = task.regulatedEndDate < timenow;
+  if (beforeStartDate) {
+    return -1;
+  }
+  if (afterEndDate) {
+    return 1;
+  }
+  return 0;
 }
 
 class DetailsPage extends Component {
@@ -151,9 +201,23 @@ class DetailsPage extends Component {
   async componentDidMount() {
     try {
       this.setState({loading: true});
-      const task = await api.getTaskLatest(this.props.match.params.id); 
+      const task = await api.getTaskLatest(this.props.match.params.id);
       if (task.guid !== this.props.match.params.id) {
         this.props.history.replace(`/tasks/${task.guid}/details`);
+      }
+
+      if (checkRegulatedTime(task.data) === 1 && task.data.status !== FINISHED) {
+        this.setState({loading: 'Task has reached deadline, updating ...'});
+        const controller = new TaskController(task.data, true);
+        controller.fsm.forceStop();
+        // if (res) {
+
+        // }
+        const nGuid = await api.updateTask(task.guid, controller.task);
+        this.props.history.replace(`/tasks/${nGuid}/details`);
+        // Not sure why but history replace does not update guid
+        this.setState({guid: nGuid});
+        return;
       }
 
       this.setState({
@@ -174,6 +238,10 @@ class DetailsPage extends Component {
 
   render() {
     const Buttons = () => {
+      if (checkRegulatedTime(this.state.task) === -1) {
+        return <h4 style={{'color': '#2799F9', 'marginTop': '3rem'}}>You can start this task on {moment(this.state.task.regulatedStartDate).format("MMMM Do YYYY")}</h4>
+      }
+
       const transitions = (new TaskController(this.state.task)).fsm.transitions();
       return <div>
         <style type="text/css">

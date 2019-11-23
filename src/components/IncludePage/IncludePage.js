@@ -90,6 +90,7 @@ class IncludePage extends Component {
                     onDatesChange={({ startDate, endDate }) => this.setState({ regulatedStartDate: startDate, regulatedEndDate: endDate })} // PropTypes.func.isRequired,
                     focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
                     onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+                    // isOutsideRange={() => false} //For testing past dates
                   />
                   <h6 style={{'textAlign': 'right'}}>Selected stress score: {this.state.estimatedStress}</h6>
                 </Col>
