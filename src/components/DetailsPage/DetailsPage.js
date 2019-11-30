@@ -7,6 +7,8 @@ import StateMachine from 'javascript-state-machine';
 import StressSlider from '../StressSlider';
 import utils from '../utils';
 import RefreshButton from '../RefreshButton';
+import style from '../../style.json'
+import { IoIosPlay, IoIosPause, IoIosSquare } from 'react-icons/io';
 import moment from "moment";
 import momentDurationFormatSetup from "moment-duration-format";
 momentDurationFormatSetup(moment);
@@ -273,25 +275,27 @@ class DetailsPage extends Component {
           {`
             .btn-xxl {
               margin: 1rem 0 0 0;
-              font-size: 3rem;
+              font-size: 10rem;
               height: 15rem;
               width: 15rem;
               border-radius: 40rem;
+              line-height: 50%;
             }
 
             .btn-xxs {
               margin: 10rem 0 0 0;
-              font-size: 1rem;
+              font-size: 3rem;
               height: 5rem;
               width: 5rem;
               border-radius: 10rem;
+              line-height: 50%;
             }
           `}
         </style>
-        { transitions.includes(START) && <Button className="cdFore" variant="light" size="xxl" onClick={() => this.changeTask(START)}>Start</Button> }
-        { transitions.includes(PAUSE) && <Button className="cdFore" variant="light" size="xxl" onClick={() => this.changeTask(PAUSE)}>Pause</Button> }
-        { transitions.includes(CONTINUE) && <Button className="cdFore" variant="light" size="xxl" onClick={() => this.changeTask(CONTINUE)}>Continue</Button> }
-        { transitions.includes(STOP) && <Button className="cdFore" variant="light" size="xxs" onClick={() => this.changeTask(STOP)}>Stop</Button> }
+        { transitions.includes(START) && <Button style={{backgroundColor: style.cdFore, color: "white"}} variant="light" size="xxl" onClick={() => this.changeTask(START)}><IoIosPlay/></Button> }
+        { transitions.includes(PAUSE) && <Button style={{backgroundColor: "orange", color: "white"}} variant="light" size="xxl" onClick={() => this.changeTask(PAUSE)}><IoIosPause/></Button> }
+        { transitions.includes(CONTINUE) && <Button style={{backgroundColor: style.cdFore, color: "white"}} variant="light" size="xxl" onClick={() => this.changeTask(CONTINUE)}><IoIosPlay/></Button> }
+        { transitions.includes(STOP) && <Button style={{backgroundColor: "red", color: "white"}} variant="light" size="xxs" onClick={() => this.changeTask(STOP)}><IoIosSquare/></Button> }
         { this.state.task.status === PAUSED && <StressCollector submitStress={this.handleSubmitStress(false)} />}
       </div>;
     };
