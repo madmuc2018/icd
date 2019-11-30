@@ -84,7 +84,15 @@ class IncludePage extends Component {
                     startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
                     endDate={this.state.regulatedEndDate} // momentPropTypes.momentObj or null,
                     endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
-                    onDatesChange={({ startDate, endDate }) => this.setState({ regulatedStartDate: startDate, regulatedEndDate: endDate })} // PropTypes.func.isRequired,
+                    onDatesChange={({ startDate, endDate }) => {
+                      const regulatedStartDate = startDate ? startDate.startOf('day') : startDate;
+                      const regulatedEndDate = endDate ? endDate.startOf('day') : endDate;
+                      console.log(`regulatedStartDate: ${regulatedStartDate}, regulatedEndDate: ${regulatedEndDate}`);
+                      this.setState({
+                        regulatedStartDate,
+                        regulatedEndDate
+                      });
+                    }} // PropTypes.func.isRequired,
                     focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
                     onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
                     isOutsideRange={() => false} //For testing past dates
