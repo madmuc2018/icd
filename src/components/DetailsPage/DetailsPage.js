@@ -181,25 +181,29 @@ class DetailsPage extends Component {
       }
     }
 
-    this.handleSubmitStress = redirect => async (stress, comment) => {
+    this.handleSubmitStress = (redirect, finalStress) => async (stress, comment) => {
       try {
         this.setState({loading: 'Updating ...'});
         const task = this.state.task;
 
-        if (!task.stresses) {
-          task.stresses = [stress]
+        if (finalStress) {
+          task.finalStress = stress;
         } else {
-          task.stresses.push(stress);
-        }
+          if (!task.stresses) {
+            task.stresses = [stress];
+          } else {
+            task.stresses.push(stress);
+          }
 
-        if (!task.comments) {
-          task.comments = [comment]
-        } else {
-          task.comments.push(comment);
-        }
+          if (!task.comments) {
+            task.comments = [comment];
+          } else {
+            task.comments.push(comment);
+          }
 
-        // stress keeps mean stress
-        task.stress = task.stresses.reduce((total, s) => s + total, 0) / task.stresses.length
+          // stress keeps mean stress
+          task.stress = task.stresses.reduce((total, s) => s + total, 0) / task.stresses.length;
+        }
 
         const nGuid = await api.updateTask(this.state.guid, task);
 
@@ -288,7 +292,7 @@ class DetailsPage extends Component {
         { transitions.includes(PAUSE) && <Button className="cdFore" variant="light" size="xxl" onClick={() => this.changeTask(PAUSE)}>Pause</Button> }
         { transitions.includes(CONTINUE) && <Button className="cdFore" variant="light" size="xxl" onClick={() => this.changeTask(CONTINUE)}>Continue</Button> }
         { transitions.includes(STOP) && <Button className="cdFore" variant="light" size="xxs" onClick={() => this.changeTask(STOP)}>Stop</Button> }
-        { this.state.task.status === PAUSED && <StressCollector submitStress={this.handleSubmitStress(false)} /> }
+        { this.state.task.status === PAUSED && <StressCollector submitStress={this.handleSubmitStress(false)} />}
       </div>;
     };
     return (
@@ -331,11 +335,21 @@ class DetailsPage extends Component {
 							  <br/><br/>
           			
 								{
-									(typeof this.state.task.stress === 'number') ?
-									<h4 className="cdBack">Submitted stress level: {this.state.task.stress}</h4>
-									:
-									<StressCollector submitStress={this.handleSubmitStress(true)} />
+									this.state.task.status === FINISHED &&
+									<h4 className="cdBack">
+                    {typeof this.state.task.stress === 'number' && `Submitted average stress level: ${this.state.task.stress}`}
+                    <br/>
+                    {typeof this.state.task.finalStress === 'number' && `Submitted overall stress level: ${this.state.task.finalStress}`}
+                  </h4>
 								}
+
+                { this.state.task.status === FINISHED &&
+                  typeof this.state.task.finalStress !== 'number' &&
+                  <div>
+                    <h4 className="cdBack">Please submit an overall stress score: </h4>
+                    <StressCollector submitStress={this.handleSubmitStress(true, true)} />
+                  </div>
+                }
           		</div>)
 
           		:
