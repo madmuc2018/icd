@@ -50,7 +50,7 @@ class CollectorPage extends React.Component {
               onChange={this.handleChange}
             />
             <br/>
-            <Button onClick={this.handleCollect}>Collect</Button>
+            <Button className="cdFore" variant="light" onClick={this.handleCollect}>Collect</Button>
             {
               this.state.csvs.map(c =>
                 <Card key={c.name} border="success" style={{ margin: '2rem 8rem' }}>

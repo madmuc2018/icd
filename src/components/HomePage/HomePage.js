@@ -9,6 +9,7 @@ import logo from "../logo.png";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import utils from '../utils';
 import RefreshButton from '../RefreshButton';
+import style from '../../style.json';
 import moment from "moment";
 import momentDurationFormatSetup from "moment-duration-format";
 momentDurationFormatSetup(moment);
@@ -93,7 +94,7 @@ class HomePageInstructor extends Component {
   }
 
   render() {
-    const BlueBreakline = () => (<hr style={{'borderTop': 'solid', 'borderColor': '#2699fb'}}/>);
+    const BlueBreakline = () => (<hr style={{'borderTop': 'solid', 'borderColor': style.cdFore}}/>);
 
     // https://css-tricks.com/snippets/css/a-guide-to-flexbox
 
@@ -103,15 +104,8 @@ class HomePageInstructor extends Component {
         'order': '3',
       }}>
         <Card style={{'minHeight': '100vh'}}>
-          <Card.Header style={{
-            'backgroundColor': '#2699fb',
-            'color': 'white',
-            'padding': '2rem'
-          }} as="h5">All Tasks</Card.Header>
-          <Card.Body style={{
-            'color': '#2699fb',
-            'margin': '0 1rem'
-          }}>
+          <Card.Header className="cdFore" style={{'padding': '2rem'}} as="h5">All Tasks</Card.Header>
+          <Card.Body className="cdBack" style={{'margin': '0 1rem'}}>
             <Card.Title>Active Tasks</Card.Title>
             <BlueBreakline />
               {
@@ -131,13 +125,13 @@ class HomePageInstructor extends Component {
       <Container>
         <Row>
           <Col className='text-center' style={{'margin': '0 7rem'}}>
-            <Card style={{'backgroundColor': '#2699fb','color': 'white'}}>
+            <Card className="cdFore">
               <Card.Body><h1>{this.state.tasks.length}</h1></Card.Body>
             </Card>
-            <h6 style={{'color': '#2699fb'}}>Total Tasks</h6>
+            <h6 className="cdBack">Total Tasks</h6>
           </Col>
           <Col className='text-center' style={{'margin': '0 7rem'}}>
-            <Card style={{'backgroundColor': '#2699fb','color': 'white'}}>
+            <Card className="cdFore">
               <Card.Body>
                 <h1>
                 {
@@ -150,7 +144,7 @@ class HomePageInstructor extends Component {
                 </h1>
               </Card.Body>
             </Card>
-            <h6 style={{'color': '#2699fb'}}>Total time spent on Task(s)</h6>
+            <h6 className="cdBack">Total time spent on Task(s)</h6>
           </Col>
         </Row>
       </Container>
@@ -168,7 +162,7 @@ class HomePageInstructor extends Component {
         'order': '2'
       }}>
         <LinkContainer to="/tasks/include">
-          <Button style={{'color': '#2699FB', 'width': '100%'}} size='lg' variant="outline-dark">Add Tasks <IoIosAddCircle/></Button>
+          <Button className="cdFore" style={{'width': '100%'}} size='lg' variant="outline-dark">Add Tasks <IoIosAddCircle/></Button>
         </LinkContainer>
         <TasksStatistics />
         <h6>Assignments</h6>
@@ -179,11 +173,11 @@ class HomePageInstructor extends Component {
 
     return (
       <div>
-        <Navbar style={{'backgroundColor': "#2699fb"}}>
-          <Navbar.Brand><IoMdPerson /> Hello, Instructor!</Navbar.Brand>
+        <Navbar className="cdFore">
+          <Navbar.Brand style={{'color': 'white'}}><IoMdPerson /> Hello, Instructor!</Navbar.Brand>
           <Navbar.Collapse className="justify-content-end">
-            <LinkContainer style={{'backgroundColor': "#2699fb", 'fontWeight': 'bold', 'color': 'white'}} to="/logout">
-              <Button>Logout</Button>
+            <LinkContainer className="cdFore" style={{'fontWeight': 'bold'}} to="/logout">
+              <Button variant="light">Logout</Button>
             </LinkContainer>
           </Navbar.Collapse>
         </Navbar>
@@ -243,31 +237,31 @@ class HomePageStudent extends Component {
         <RefreshButton />
         <Container>
           <AsyncAwareContainer loading={this.state.loading}>
-            <h4 style={{'color': '#2699FB'}}>Active tasks</h4>
+            <h4 className="cdBack">Active tasks</h4>
             {
               this.activeTasks()
                 .map(i =>
                 <div key={i.guid}>
-                  <Card style={{'backgroundColor': '#F1F8FF', 'color': '#2699FB'}}>
+                  <Card className="cdBack">
                     <Card.Body>
                       <h5> <IoMdSettings/> {i.data.name} </h5>
                       <LinkContainer to={`/tasks/${i.guid}/details`} replace>
-                        <Button variant="primary">Start Task</Button>
+                        <Button className="cdFore" size="lg" variant="light">Start Task</Button>
                       </LinkContainer>
                     </Card.Body>
                   </Card>
                   <br/>
                 </div>
             )}
-            <h4 style={{'color': '#2699FB'}}>Completed Tasks</h4>
+            <h4 className="cdBack">Completed Tasks</h4>
             {
               this.completedTasks()
                 .map(i =>
                 <div key={i.guid}>
-                  <Card style={{'backgroundColor': '#F1F8FF', 'color': '#2699FB'}}>
+                  <Card className="cdBack">
                     <Card.Body>
-                      <LinkContainer style={{'backgroundColor': '#F1F8FF', 'color': '#2699FB'}} to={`/tasks/${i.guid}/details`} replace>
-                        <Button size="lg" variant="light"><IoMdSettings/> {i.data.name}</Button>
+                      <LinkContainer to={`/tasks/${i.guid}/details`} replace>
+                        <Button className="cdFore" size="lg" variant="light"><IoMdSettings/> {i.data.name}</Button>
                       </LinkContainer>
                     </Card.Body>
                   </Card>

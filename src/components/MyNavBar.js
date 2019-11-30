@@ -4,15 +4,15 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 export default () => (
   <div>
-    <Navbar style={{'backgroundColor': "#2699fb"}}>
+    <Navbar className="cdFore">
       <Nav className="mr-auto">
-        <LinkContainer style={{'backgroundColor': "#2699fb", 'fontWeight': 'bold', 'color': 'white'}} to="/">
+        <LinkContainer className="cdFore" style={{'fontWeight': 'bold'}} to="/">
           <Button variant="link">Home</Button>
         </LinkContainer>
       </Nav>
       <Navbar.Collapse className="justify-content-end">
-        <LinkContainer style={{'backgroundColor': "#2699fb", 'fontWeight': 'bold', 'color': 'white'}} to="/logout">
-          <Button>Logout</Button>
+        <LinkContainer className="cdFore" style={{'fontWeight': 'bold'}} to="/logout">
+          <Button variant="light">Logout</Button>
         </LinkContainer>
       </Navbar.Collapse>
     </Navbar>

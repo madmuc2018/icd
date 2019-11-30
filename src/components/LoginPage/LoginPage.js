@@ -69,13 +69,13 @@ class LoginForm extends React.Component {
           </InputGroup.Append>
         </InputGroup>
         <FormRow name="password" placeholder="Password" type="password" onChange={this.handleChange} />
-        <Button size='sm' onClick={this.handleLogin} block><IoMdArrowRoundForward/></Button>
+        <Button className="cdFore" variant="light" size='sm' onClick={this.handleLogin} block><IoMdArrowRoundForward/></Button>
       </AsyncAwareContainer>
     }
     return <div>
-      <p style={{color: '#2699FB'}}> To start using this app, you must first give your consent to participate in the study: Impact of curriculum overload on students' mental health using the Curriculum Densitometer </p>
+      <p className="cdBack"> To start using this app, you must first give your consent to participate in the study: Impact of curriculum overload on students' mental health using the Curriculum Densitometer </p>
       <LinkContainer to={`/consent`} replace>
-        <Button variant="primary">
+        <Button className="cdFore" variant="light">
           Give consent
         </Button>
       </LinkContainer>
@@ -93,12 +93,10 @@ class LoginPage extends React.Component {
               'minHeight': '100vh',
               'minWidth': '98vw'
             }}>
-              <Col style={{
-                'backgroundColor': '#2699fb',
+              <Col className="cdFore" style={{
                 'display': 'flex',
                 'alignItems': 'center',
                 'justifyContent': 'center',
-                'color': 'white'
               }}>
                 <div style={{width: '20rem'}}>
                   <h5>Welcome to CD</h5>
@@ -114,10 +112,7 @@ class LoginPage extends React.Component {
                   }} variant="outline-dark">Learn more</Button>
                 </div>
               </Col>
-              <Col style={{
-                'margin': '20% 0 20% 0',
-                'color': '#2699FB'
-              }}>
+              <Col className="cdBack" style={{'margin': '20% 0 20% 0'}}>
                 <Image src={logo} style={{width: '10rem'}} fluid />
                 <h4 className="text-center">Sign in</h4>
                 <LoginForm routerHistory={this.props.history} />

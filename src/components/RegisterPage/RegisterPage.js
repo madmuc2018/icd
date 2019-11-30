@@ -78,7 +78,7 @@ class RegisterPage extends React.Component {
               onChange={() => this.setState({instructor: !this.state.instructor})}
             />
             <br />
-            <Button onClick={this.handleRegister}>Register</Button>
+            <Button className="cdFore" variant="light" onClick={this.handleRegister}>Register</Button>
           </AsyncAwareContainer>
         </Container>
       </div>

@@ -260,18 +260,13 @@ class DetailsPage extends Component {
   render() {
     const Buttons = () => {
       if (checkRegulatedTime(this.state.task) === -1) {
-        return <h4 style={{'color': '#2799F9', 'marginTop': '3rem'}}>You can start this task on {moment(this.state.task.regulatedStartDate).format("MMMM Do YYYY")}</h4>
+        return <h4 className="cdFontColor" style={{'marginTop': '3rem'}}>You can start this task on {moment(this.state.task.regulatedStartDate).format("MMMM Do YYYY, h:mm:ss a")}</h4>
       }
 
       const transitions = (new TaskController(this.state.task)).fsm.transitions();
       return <div>
         <style type="text/css">
           {`
-            .btn-flat {
-              background-color: #2799F9;
-              color: white;
-            }
-
             .btn-xxl {
               margin: 1rem 0 0 0;
               font-size: 3rem;
@@ -289,10 +284,10 @@ class DetailsPage extends Component {
             }
           `}
         </style>
-        { transitions.includes(START) && <Button variant="flat" size="xxl" onClick={() => this.changeTask(START)}>Start</Button> }
-        { transitions.includes(PAUSE) && <Button variant="flat" size="xxl" onClick={() => this.changeTask(PAUSE)}>Pause</Button> }
-        { transitions.includes(CONTINUE) && <Button variant="flat" size="xxl" onClick={() => this.changeTask(CONTINUE)}>Continue</Button> }
-        { transitions.includes(STOP) && <Button variant="flat" size="xxs" onClick={() => this.changeTask(STOP)}>Stop</Button> }
+        { transitions.includes(START) && <Button className="cdFore" variant="light" size="xxl" onClick={() => this.changeTask(START)}>Start</Button> }
+        { transitions.includes(PAUSE) && <Button className="cdFore" variant="light" size="xxl" onClick={() => this.changeTask(PAUSE)}>Pause</Button> }
+        { transitions.includes(CONTINUE) && <Button className="cdFore" variant="light" size="xxl" onClick={() => this.changeTask(CONTINUE)}>Continue</Button> }
+        { transitions.includes(STOP) && <Button className="cdFore" variant="light" size="xxs" onClick={() => this.changeTask(STOP)}>Stop</Button> }
         { this.state.task.status === PAUSED && <StressCollector submitStress={this.handleSubmitStress(false)} /> }
       </div>;
     };
@@ -306,7 +301,7 @@ class DetailsPage extends Component {
           		(this.state.task.status === 'finished') ?
 
           		(<div>
-					      <Card style={{'backgroundColor': '#2799F9', 'color': 'white'}}>
+					      <Card className="cdFore">
           				<Card.Body>
 									  <h4>Task {this.state.task.name} completed, time spent: {moment.duration(this.state.task.duration).format("m [minute]")}</h4>
                     <Table bordered style={{'color': 'white'}}>
@@ -337,7 +332,7 @@ class DetailsPage extends Component {
           			
 								{
 									(typeof this.state.task.stress === 'number') ?
-									<h6 style={{'color': '#2699FB'}}>Submitted stress level: {this.state.task.stress}</h6>
+									<h4 className="cdBack">Submitted stress level: {this.state.task.stress}</h4>
 									:
 									<StressCollector submitStress={this.handleSubmitStress(true)} />
 								}
@@ -346,7 +341,7 @@ class DetailsPage extends Component {
           		:
 
 	          	(<div>
-	          		<Card style={{'backgroundColor': '#2799F9', 'color': 'white'}}>
+	          		<Card className="cdFore">
 	          			<Card.Body>
 									  <h2>{this.state.task.name}</h2>
 									  <br/><br/>
@@ -381,7 +376,7 @@ class StressCollector extends Component {
   render() {
     return (
     	<div>
-    		<h6 style={{'color': '#2699FB'}}>Drag the scroll bar up to indicate how stressful you felt in completing this activity</h6>
+    		<h6 className="cdBack">Drag the scroll bar up to indicate how stressful you felt in completing this activity</h6>
     		<div style={{
     			margin: '2rem',
     			display: 'flex',
@@ -391,14 +386,14 @@ class StressCollector extends Component {
           <StressSlider start={this.state.value} onEnd={this.onEnd} />
 	      </div>
         <Form.Group>
+          <h6 className="cdBack">Comments</h6>
           <Form.Control
-            placeholder='Do you have any comments? Were you able to time the duration of the task accurately? If no - please indicate the approximate duration that was recorded, but not spent on task (e.g. you forgot to "pause", while embarking on another activity unconnected to the task)'
             onChange={e => this.setState({comments: e.target.value})}
             as="textarea"
             rows="4"
           />
         </Form.Group>
-	      <Button style={{'backgroundColor': '#2799F9'}} onClick={() => this.props.submitStress(this.state.value, this.state.comments)}>Submit</Button>
+	      <Button className="cdFore" variant="light" onClick={() => this.props.submitStress(this.state.value, this.state.comments)}>Submit</Button>
       </div>
     );
   }

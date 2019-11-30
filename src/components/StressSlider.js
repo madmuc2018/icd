@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Col } from 'react-bootstrap';
 import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
+import style from '../style.json';
 
 class StressSlider extends Component {
   render() {
@@ -27,7 +28,8 @@ class StressSlider extends Component {
           }
 
           .noUi-tooltip {
-            color: #2699FB;
+            background-color: ${style.cdFore};
+            color: white;
           }
         `}
       </style>

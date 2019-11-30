@@ -72,13 +72,13 @@ class ConsentPage extends React.Component {
             .customWrapper {
               height: 3rem;
               font-size: 1.2rem;
-              background-color: #fff;
+              background-color: #f0fff9;
             }
           `}
         </style>
-        <Button variant="light" onClick={this.decreaseScale}>-</Button>
+        <Button className="cdFore" variant="light" onClick={this.decreaseScale}>-</Button>
         <span>Scale: {this.state.scale}</span>
-        <Button variant="light" onClick={this.increaseScale}>+</Button>
+        <Button className="cdFore" variant="light" onClick={this.increaseScale}>+</Button>
         <PDFViewer
           document={{url: consentPdf}}
           css="customViewer"
@@ -97,7 +97,7 @@ class ConsentPage extends React.Component {
           display: 'flex',
           justifyContent: 'center'
         }}>
-          <Button size="lg" className="text-center" variant="primary" onClick={this.handleConsent}>
+          <Button  size="lg" className="cdFore text-center" variant="light" onClick={this.handleConsent}>
             Give consent
           </Button>
         </div>

@@ -10,6 +10,8 @@ import ConsentPage from "./components/ConsentPage/ConsentPage"
 import CollectorPage from "./components/CollectorPage/CollectorPage"
 import Auth from "./stores/auth";
 
+import './style.css';
+
 function PrivateRoute({ component: Component, ...rest }) {
   return (
     <Route

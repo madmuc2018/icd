@@ -67,10 +67,7 @@ class IncludePage extends Component {
   render() {
     if (window.FOR_INSTRUCTOR) {
       return (
-        <div style={{
-          'color': '#2699FB',
-          'margin': '5% 0 0 0'
-        }}>
+        <div className="cdBack" style={{'margin': '5% 0 0 0'}}>
           <h1 className="text-center">Create a New Task</h1>
           <AsyncAwareContainer loading={this.state.loading}>
             <Container style={{
@@ -103,7 +100,7 @@ class IncludePage extends Component {
                   <Card className="text-center" body><b>What level of stress do you think your students may experience in completing this task?</b></Card>
                   <br/>
                   <h5>Interpretation of the stress scroll bar:</h5>
-                  <Table bordered style={{'color': '#2699FB'}}>
+                  <Table className="cdBack" bordered>
                     <thead>
                       <tr>
                         <th>Score</th>
@@ -131,7 +128,7 @@ class IncludePage extends Component {
             <br/><br/>
             <div className="text-center">
               {
-                this.validInput() ? <Button onClick={this.submit}> Create </Button> : <Guard/>
+                this.validInput() ? <Button className="cdFore" variant="light" onClick={this.submit}> Create </Button> : <Guard/>
               }
             </div>
           </AsyncAwareContainer>
@@ -154,14 +151,14 @@ function Guard() {
 
   return (
     <div>
-      <Button variant="primary" onClick={handleShow}>
+      <Button className="cdFore" variant="light" onClick={handleShow}>
         Create
       </Button>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Body> Do not leave name, Estimated Hours, and dates empty and make sure Estimated Hours is a number</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button className="cdFore" variant="light" onClick={handleClose}>
             Close
           </Button>
         </Modal.Footer>
