@@ -378,7 +378,7 @@ class StressCollector extends Component {
     	<div>
     		<h6 className="cdBack">Drag the scroll bar up to indicate how stressful you felt in completing this activity</h6>
     		<div style={{
-    			margin: '2rem',
+    			marginLeft: '10rem',
     			display: 'flex',
 				  justifyContent: 'center',
           'height': '35rem'
