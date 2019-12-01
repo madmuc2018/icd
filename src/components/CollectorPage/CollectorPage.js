@@ -45,6 +45,7 @@ class CollectorPage extends React.Component {
           <h1>Collector</h1>
           <AsyncAwareContainer loading={this.state.loading}>
             <FormControl
+              type="password"
               placeholder="Credentials"
               name="credentials"
               onChange={this.handleChange}
