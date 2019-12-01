@@ -239,15 +239,14 @@ class DetailsPage extends Component {
 
       if (checkRegulatedTime(task.data) === 1 && task.data.status !== FINISHED) {
         this.setState({loading: 'Task has reached deadline, updating ...'});
+        await utils.timeout(1000);
         const controller = new TaskController(task.data, true);
         controller.fsm.forceStop();
         // if (res) {
 
         // }
-        const nGuid = await api.updateTask(task.guid, controller.task);
-        this.props.history.replace(`/tasks/${nGuid}/details`);
-        // Not sure why but history replace does not update guid
-        this.setState({guid: nGuid});
+        await api.updateTask(task.guid, controller.task);
+        this.props.history.replace(`/`);
         return;
       }
 
