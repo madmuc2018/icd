@@ -39,7 +39,7 @@ class TaskController {
         { name: START,    from: CREATED,    to: INPROGRESS },
         { name: PAUSE,    from: INPROGRESS, to: PAUSED },
         { name: CONTINUE, from: PAUSED,     to: INPROGRESS },
-        { name: STOP,     from: PAUSED,     to: FINISHED }
+        { name: STOP,     from: INPROGRESS, to: FINISHED }
       ],
       methods: {
         onStart() {
@@ -66,7 +66,11 @@ class TaskController {
         onStop() {
           const timeNow = (new Date()).getTime();
           task.endTime = timeNow;
-          task.duration += timeNow - task.pauseTime;
+          if (task.pauseTime) {
+            task.duration += timeNow - task.pauseTime;
+          } else {
+            task.duration = timeNow - task.startTime;
+          }
 
           task.status = this.state;
         },
@@ -283,17 +287,17 @@ class DetailsPage extends Component {
             }
 
             .btn-xxs {
-              margin: 10rem 0 0 0;
+              margin: 1rem 0 0 0;
               font-size: 3rem;
-              height: 5rem;
-              width: 5rem;
+              height: 9rem;
+              width: 9rem;
               border-radius: 10rem;
               line-height: 50%;
             }
           `}
         </style>
         { transitions.includes(START) && <Button style={{backgroundColor: style.cdFore, color: "white"}} variant="light" size="xxl" onClick={() => this.changeTask(START)}><IoIosPlay/></Button> }
-        { transitions.includes(PAUSE) && <Button style={{backgroundColor: "orange", color: "white"}} variant="light" size="xxl" onClick={() => this.changeTask(PAUSE)}><IoIosPause/></Button> }
+        { transitions.includes(PAUSE) && <Button style={{backgroundColor: "orange", color: "white"}} variant="light" size="xxs" onClick={() => this.changeTask(PAUSE)}><IoIosPause/></Button> }
         { transitions.includes(CONTINUE) && <Button style={{backgroundColor: style.cdFore, color: "white"}} variant="light" size="xxl" onClick={() => this.changeTask(CONTINUE)}><IoIosPlay/></Button> }
         { transitions.includes(STOP) && <Button style={{backgroundColor: "red", color: "white"}} variant="light" size="xxs" onClick={() => this.changeTask(STOP)}><IoIosSquare/></Button> }
         { this.state.task.status === PAUSED && <StressCollector submitStress={this.handleSubmitStress(false)} />}
@@ -322,15 +326,15 @@ class DetailsPage extends Component {
                       <tbody>
                         <tr>
                           <td>1 - 4 = low stress</td>
-                          <td>You are likely <b>not</b> psychologically distressed</td>
+                          <td>You are likely <b>not</b> distressed</td>
                         </tr>
                         <tr>
                           <td>4.1 - 7 = moderate stress</td>
-                          <td>You are likely <b>mildly</b> psychologically distressed</td>
+                          <td>You are likely <b>mildly</b> distressed</td>
                         </tr>
                         <tr>
                           <td>7.1 - 10 = high stress</td>
-                          <td>You are likely to be <b>severely</b> psychologically distressed</td>
+                          <td>You are likely to be <b>severely</b> distressed</td>
                         </tr>
                       </tbody>
                     </Table>

@@ -118,15 +118,15 @@ class IncludePage extends Component {
                     <tbody>
                       <tr>
                         <td>1 - 4 = low stress</td>
-                        <td>Student may <b>not</b> be psychologically distressed</td>
+                        <td>Student may <b>not</b> be distressed</td>
                       </tr>
                       <tr>
                         <td>4.1 - 7 = moderate stress</td>
-                        <td>Student may be <b>mildly</b> psychologically distressed</td>
+                        <td>Student may be <b>mildly</b> distressed</td>
                       </tr>
                       <tr>
                         <td>7.1 - 10 = high stress</td>
-                        <td>Student may  be <b>severely</b> psychologically distressed</td>
+                        <td>Student may  be <b>severely</b> distressed</td>
                       </tr>
                     </tbody>
                   </Table>
