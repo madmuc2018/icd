@@ -187,13 +187,13 @@ class DetailsPage extends Component {
       }
     }
 
-    this.handleSubmitStress = (redirect, finalStress) => async (stress, comment) => {
+    this.handleSubmitStress = (redirect, overallStress) => async (stress, comment) => {
       try {
         this.setState({loading: 'Updating ...'});
         const task = this.state.task;
 
-        if (finalStress) {
-          task.finalStress = stress;
+        if (overallStress) {
+          task.overallStress = stress;
         } else {
           if (!task.stresses) {
             task.stresses = [stress];
@@ -346,12 +346,12 @@ class DetailsPage extends Component {
 									<h4 className="cdBack">
                     {typeof this.state.task.stress === 'number' && `Submitted average stress level: ${this.state.task.stress}`}
                     <br/>
-                    {typeof this.state.task.finalStress === 'number' && `Submitted overall stress level: ${this.state.task.finalStress}`}
+                    {typeof this.state.task.overallStress === 'number' && `Submitted overall stress level: ${this.state.task.overallStress}`}
                   </h4>
 								}
 
                 { this.state.task.status === FINISHED &&
-                  typeof this.state.task.finalStress !== 'number' &&
+                  typeof this.state.task.overallStress !== 'number' &&
                   <div>
                     <h4 className="cdBack">Please submit an overall stress score: </h4>
                     <StressCollector submitStress={this.handleSubmitStress(true, true)} />
