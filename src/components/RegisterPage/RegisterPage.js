@@ -72,11 +72,14 @@ class RegisterPage extends React.Component {
               </InputGroup.Append>
             </InputGroup>
             <FormRow name="password" placeholder="password" type="password" onChange={this.handleChange} />
-            <Form.Check
-              name="instructor"
-              label="I'm an instructor"
-              onChange={() => this.setState({instructor: !this.state.instructor})}
-            />
+            {
+              window.FOR_INSTRUCTOR &&
+              <Form.Check
+                name="instructor"
+                label="I'm an instructor"
+                onChange={() => this.setState({instructor: !this.state.instructor})}
+              />
+            }
             <br />
             <Button className="cdFore" variant="light" onClick={this.handleRegister}>Register</Button>
           </AsyncAwareContainer>
