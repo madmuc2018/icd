@@ -10,7 +10,8 @@ class CollectorPage extends React.Component {
 
     this.state = {
       credentials: "",
-      csvs: []
+      csvs: [],
+      loginsCsv: null
     };
 
     this.handleChange = event => {
@@ -20,11 +21,24 @@ class CollectorPage extends React.Component {
       });
     }
 
-    this.handleCollect = async event => {
+    this.handleCollectTasks = async event => {
       try {
         this.setState({loading: 'Collecting'});
         const csvs = await api.collect(this.state.credentials);
         this.setState({ csvs });
+      } catch (error) {
+        alert(error.message);
+      } finally {
+        if (!this.componentUnmounted)
+          this.setState({loading: undefined});
+      }
+    }
+
+    this.handleCollectLogins = async event => {
+      try {
+        this.setState({loading: 'Collecting'});
+        const loginsCsv = await api.collectLogins(this.state.credentials);
+        this.setState({ loginsCsv });
       } catch (error) {
         alert(error.message);
       } finally {
@@ -51,7 +65,17 @@ class CollectorPage extends React.Component {
               onChange={this.handleChange}
             />
             <br/>
-            <Button className="cdFore" variant="light" onClick={this.handleCollect}>Collect</Button>
+            <Button className="cdFore" variant="light" onClick={this.handleCollectTasks}>Collect Tasks</Button>
+            <Button className="cdFore" variant="light" onClick={this.handleCollectLogins}>Collect Logins</Button>
+            {
+              this.state.loginsCsv && 
+              <Card border="success" style={{ margin: '2rem 8rem' }}>
+                <Card.Body>
+                  <Card.Title>Logins</Card.Title>
+                  <CSVLink filename={`logins.csv`} data={this.state.loginsCsv}>Download</CSVLink>
+                </Card.Body>
+              </Card>
+            }
             {
               this.state.csvs.map(c =>
                 <Card key={c.name} border="success" style={{ margin: '2rem 8rem' }}>

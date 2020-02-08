@@ -357,6 +357,8 @@ class DetailsPage extends Component {
                     <StressCollector submitStress={this.handleSubmitStress(true, true)} />
                   </div>
                 }
+
+                <h6>Start Date: {this.state.task.startTime ? moment(this.state.task.startTime).format(timeFormat) : ''} | End Date: {this.state.task.endTime ? moment(this.state.task.endTime).format(timeFormat) : ''}</h6>
           		</div>)
 
           		:
