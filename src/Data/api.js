@@ -83,4 +83,11 @@ export default {
       axiosError(e);
     }
   },
+  collectLogins: async link => {
+    try {
+      return (await axios.post(`${API}/collector/logins`, { link })).data;
+    } catch (e) {
+      axiosError(e);
+    }
+  },
 };
