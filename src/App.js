@@ -1,6 +1,7 @@
 import React from "react";
 import { HashRouter, Switch, Redirect, Route } from "react-router-dom";
 
+import HelpButton from "./components/HelpButton"
 import HomePage from "./components/HomePage/HomePage"
 import IncludePage from "./components/IncludePage/IncludePage"
 import DetailsPage from "./components/DetailsPage/DetailsPage"
@@ -58,18 +59,21 @@ function LogoutRoute({ component: Component, ...rest }) {
 export default class App extends React.Component {
   render() {
     return (
-      <HashRouter>
-        <Switch>
-          <Route exact path="/login" component={LoginPage} />
-          <Route exact path="/register" component={RegisterPage} />
-          <Route exact path="/consent" component={ConsentPage} />
-          <Route exact path="/collect" component={CollectorPage} />
-          <LogoutRoute exact path="/logout" />
-          <PrivateRoute exact path="/" component={HomePage} />
-          <PrivateRoute exact path="/tasks/include" component={IncludePage} />
-          <PrivateRoute exact path="/tasks/:id/details" component={DetailsPage} />
-        </Switch>
-      </HashRouter>
+      <div>
+        { !window.FOR_INSTRUCTOR && <HelpButton /> }
+        <HashRouter>
+          <Switch>
+            <Route exact path="/login" component={LoginPage} />
+            <Route exact path="/register" component={RegisterPage} />
+            <Route exact path="/consent" component={ConsentPage} />
+            <Route exact path="/collect" component={CollectorPage} />
+            <LogoutRoute exact path="/logout" />
+            <PrivateRoute exact path="/" component={HomePage} />
+            <PrivateRoute exact path="/tasks/include" component={IncludePage} />
+            <PrivateRoute exact path="/tasks/:id/details" component={DetailsPage} />
+          </Switch>
+        </HashRouter>
+      </div>
     );
   }
 }
