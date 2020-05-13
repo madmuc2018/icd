@@ -127,6 +127,12 @@ class LoginPage extends React.Component {
         <Container className="text-center">
           <Image src={logo} style={{margin: '5rem', width: '15rem'}} fluid />
           <LoginForm routerHistory={this.props.history} />
+          <br/>
+          <h6> Doesn't have an account? 
+            <LinkContainer to="/register">
+              <a> Sign Up</a>
+            </LinkContainer>
+          </h6>
         </Container>
       </div>
     );
