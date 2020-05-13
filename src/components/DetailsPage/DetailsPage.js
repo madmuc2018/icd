@@ -193,6 +193,10 @@ class DetailsPage extends Component {
         const task = this.state.task;
 
         if (overallStress) {
+          window.open("https://www.surveymonkey.ca/r/CDapp_post-test");
+        }
+
+        if (overallStress) {
           task.overallStress = stress;
         } else {
           if (!task.stresses) {
